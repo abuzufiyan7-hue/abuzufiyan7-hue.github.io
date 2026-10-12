@@ -1,1398 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#091013">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
 
-<!-- Primary SEO -->
-<title>PRView.site — Search Instagram Profiles by Username</title>
-<meta name="description" content="Search an Instagram username and open that public profile directly on Instagram. No password required and nothing stored — a faster way to find profiles.">
-<link rel="canonical" href="https://prview.site/">
-<meta name="robots" content="index, follow">
+  <title>Instagram Profile Lookup | PRView.site</title>
+  <meta name="description" content="Enter an Instagram username on PRView.site to prepare a direct link to its Instagram profile. Public profile visibility is controlled by Instagram.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://prview.site/">
 
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="PRView.site">
-<meta property="og:title" content="PRView.site — Search Instagram Profiles by Username">
-<meta property="og:description" content="Enter an Instagram username and open that public profile directly on Instagram. No password, no login, nothing stored.">
-<meta property="og:url" content="https://prview.site/">
-<meta property="og:locale" content="en_US">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Instagram Profile Lookup | PRView.site">
+  <meta property="og:description" content="Enter a username and continue to its Instagram profile page.">
+  <meta property="og:url" content="https://prview.site/">
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PRView.site — Search Instagram Profiles by Username">
-<meta name="twitter:description" content="Enter an Instagram username and open that public profile directly on Instagram. No password, no login, nothing stored.">
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #111;
+      --muted: #666;
+      --border: #e5e5e5;
+      --soft: #f7f7f7;
+    }
 
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    * { box-sizing: border-box; }
 
-<!-- Fonts: editorial serif display + clean grotesque body -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
 
-<style>
-/* =========================================================
-   1. Design tokens
-   ========================================================= */
-:root{
-  --bg:#091013;
-  --bg-2:#0E191D;
-  --teal:#153037;
-  --ice:#BCEFFF;
-  --chrome:#C5CBD2;
-  --text:#F4F8FA;
-  --muted:#9BAEB5;
-  --border:rgba(197,203,210,.16);
-  --border-strong:rgba(197,203,210,.28);
-  --danger:#FFB4B4;
+    a { color: inherit; }
 
-  --radius-lg:20px;
-  --radius-md:14px;
-  --wrap:1180px;
-  --pad:clamp(18px,5vw,40px);
-  --header-h:66px;
-}
+    .container {
+      width: min(100% - 36px, 960px);
+      margin: auto;
+    }
 
-/* =========================================================
-   2. Reset & base
-   ========================================================= */
-*,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0;
-  min-height:100%;
-  font-family:var(--font-body);
-  font-size:16px;
-  line-height:1.6;
-  color:var(--text);
-  background-color:var(--bg);
-  background-image:
-    radial-gradient(1100px 620px at 8% -12%, rgba(21,48,55,.65), transparent 62%),
-    radial-gradient(900px 520px at 92% 2%, rgba(188,239,255,.055), transparent 60%),
-    radial-gradient(760px 760px at 50% 118%, rgba(21,48,55,.45), transparent 66%);
-  background-repeat:no-repeat;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-}
-img,svg{display:block;max-width:100%}
-button,input{font:inherit;color:inherit}
-h1,h2,h3,p,ul,ol{margin:0}
-ul,ol{padding:0;list-style:none}
-a{color:inherit}
+    header {
+      border-bottom: 1px solid var(--border);
+    }
 
-:focus-visible{outline:2px solid var(--ice);outline-offset:3px;border-radius:6px}
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
 
-@media (prefers-reduced-motion: no-preference){
-  html{scroll-behavior:smooth}
-}
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      text-decoration: none;
+      letter-spacing: -1px;
+    }
 
-/* =========================================================
-   3. Utilities
-   ========================================================= */
-.wrap{
-  width:100%;
-  max-width:var(--wrap);
-  margin-inline:auto;
-  padding-inline:var(--pad);
-}
-.sr-only{
-  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
-}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:9px;
-  font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:16px;
-}
-.eyebrow::before{
-  content:"";width:22px;height:1px;flex:none;
-  background:linear-gradient(90deg,transparent,var(--ice));
-}
-.rule{
-  height:1px;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(197,203,210,.22) 18%,
-    rgba(188,239,255,.30) 50%,
-    rgba(197,203,210,.22) 82%,
-    transparent 100%);
-  margin-bottom:clamp(28px,5vw,56px);
-}
-section[id]{scroll-margin-top:calc(var(--header-h) + 18px)}
+    .brand-mark {
+      display: inline-block;
+      border: 1px solid #111;
+      padding: 1px 7px;
+      border-radius: 6px;
+      margin-right: 5px;
+    }
 
-/* =========================================================
-   4. Header
-   ========================================================= */
-.site-header{
-  position:sticky;top:0;z-index:60;
-  background:rgba(9,16,19,.78);
-  border-bottom:1px solid var(--border);
-  -webkit-backdrop-filter:blur(16px) saturate(140%);
-  backdrop-filter:blur(16px) saturate(140%);
-}
-@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-  .site-header{background:rgba(9,16,19,.97)}
-}
-.header-inner{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  min-height:var(--header-h);
-}
-.brand{
-  display:inline-flex;align-items:center;gap:11px;
-  text-decoration:none;color:var(--text);
-  padding:6px 0;border-radius:8px;
-}
-.brand-mark{width:28px;height:28px;flex:none}
-.brand-name{font-weight:600;font-size:1.02rem;letter-spacing:-.012em}
-.brand-name .brand-tld{color:var(--muted);font-weight:500}
+    .nav-label {
+      font-size: 13px;
+      color: var(--muted);
+    }
 
-.primary-nav ul{display:flex;align-items:center;gap:4px}
-.nav-link{
-  display:inline-block;
-  padding:9px 15px;
-  border-radius:999px;
-  font-size:.9rem;font-weight:500;
-  color:var(--muted);text-decoration:none;
-  border:1px solid transparent;
-  transition:color .2s ease,border-color .2s ease,background-color .2s ease;
-}
-.nav-link:hover{color:var(--text);border-color:var(--border);background:rgba(197,203,210,.05)}
-.nav-link:focus-visible{color:var(--text)}
+    .hero {
+      padding: 75px 0 45px;
+      text-align: center;
+    }
 
-.nav-toggle{
-  display:none;
-  position:relative;
-  width:42px;height:42px;flex:none;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:rgba(197,203,210,.04);
-  cursor:pointer;
-  transition:border-color .2s ease,background-color .2s ease;
-}
-.nav-toggle:hover{border-color:var(--border-strong);background:rgba(197,203,210,.08)}
-.nav-toggle .bars{position:absolute;inset:0}
-.nav-toggle .bars span{
-  position:absolute;left:11px;right:11px;height:1.5px;border-radius:2px;
-  background:var(--chrome);
-  transition:transform .26s ease,opacity .18s ease;
-}
-.nav-toggle .bars span:nth-child(1){top:15px}
-.nav-toggle .bars span:nth-child(2){top:21px}
-.nav-toggle .bars span:nth-child(3){top:27px}
-.nav-toggle[aria-expanded="true"] .bars span:nth-child(1){transform:translateY(6px) rotate(45deg)}
-.nav-toggle[aria-expanded="true"] .bars span:nth-child(2){opacity:0}
-.nav-toggle[aria-expanded="true"] .bars span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+    .eyebrow {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 5px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-/* =========================================================
-   5. Search console (primary focus)
-   ========================================================= */
-.search-section{
-  position:relative;
-  overflow:hidden;
-  overflow:clip;
-  padding:clamp(30px,6vw,74px) 0 clamp(16px,3vw,30px);
-}
-.console-wrap{
-  position:relative;
-  max-width:760px;
-}
+    h1 {
+      max-width: 750px;
+      margin: 22px auto 15px;
+      font-size: clamp(32px, 6vw, 53px);
+      line-height: 1.12;
+      letter-spacing: -2px;
+    }
 
-/* Decorative ice-lens orbit — the signature visual */
-.orbit{
-  position:absolute;
-  z-index:0;
-  pointer-events:none;
-  top:-24px;right:-24px;
-  width:150px;height:150px;
-  opacity:.85;
-}
-@media (min-width:900px){
-  .orbit{top:-72px;right:-70px;width:290px;height:290px;opacity:.95}
-}
-.orbit-spin{
-  transform-origin:150px 150px;
-  animation:orbitSpin 46s linear infinite;
-}
-@keyframes orbitSpin{to{transform:rotate(360deg)}}
+    .intro {
+      max-width: 650px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 17px;
+    }
 
-.console{
-  position:relative;
-  z-index:1;
-  padding:clamp(18px,3vw,26px);
-  border-radius:var(--radius-lg);
-  border:1px solid var(--border);
-  background:
-    linear-gradient(180deg, rgba(21,48,55,.66) 0%, rgba(14,25,29,.92) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(244,248,250,.07),
-    inset 0 0 0 1px rgba(9,16,19,.35),
-    0 34px 70px -34px rgba(0,0,0,.95);
-  -webkit-backdrop-filter:blur(18px) saturate(130%);
-  backdrop-filter:blur(18px) saturate(130%);
-}
-@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-  .console{background:linear-gradient(180deg,#122A31 0%,#0E191D 100%)}
-}
-/* chrome hairline along the top edge */
-.console::before{
-  content:"";
-  position:absolute;top:0;left:12%;right:12%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(188,239,255,.55),rgba(197,203,210,.25),transparent);
-}
+    .search-card {
+      max-width: 620px;
+      margin: 30px auto 0;
+      padding: 23px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      text-align: left;
+    }
 
-.console-head{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  margin-bottom:18px;
-}
-.console-title{
-  display:inline-flex;align-items:center;gap:9px;
-  font-size:.68rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--muted);
-}
-.console-title::before{
-  content:"";width:6px;height:6px;border-radius:50%;
-  background:var(--ice);
-  box-shadow:0 0 10px rgba(188,239,255,.85);
-}
-.tag{
-  font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:5px 11px;
-  white-space:nowrap;
-}
-@media (max-width:400px){ .tag{display:none} }
+    label {
+      display: block;
+      margin-bottom: 9px;
+      font-weight: 700;
+    }
 
-.field-label{
-  display:block;
-  font-size:.86rem;font-weight:600;letter-spacing:.005em;
-  color:var(--text);
-  margin-bottom:9px;
-}
-.field-row{display:flex;gap:10px;align-items:stretch}
-.input-shell{position:relative;flex:1 1 auto;min-width:0}
-.at-icon{
-  position:absolute;left:16px;top:50%;transform:translateY(-50%);
-  width:18px;height:18px;flex:none;
-  color:var(--muted);
-  pointer-events:none;
-  transition:color .2s ease;
-}
-.input-shell:focus-within .at-icon{color:var(--ice)}
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
 
-#username{
-  width:100%;
-  height:56px;
-  padding:0 16px 0 46px;
-  border-radius:var(--radius-md);
-  border:1px solid var(--border);
-  background:rgba(9,16,19,.66);
-  color:var(--text);
-  font-size:1rem;
-  transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease;
-}
-#username::placeholder{color:#6C8088}
-#username:hover{border-color:var(--border-strong)}
-#username:focus,
-#username:focus-visible{
-  outline:none;
-  border-color:rgba(188,239,255,.62);
-  background:rgba(9,16,19,.86);
-  box-shadow:
-    0 0 0 4px rgba(188,239,255,.12),
-    0 0 26px -8px rgba(188,239,255,.55);
-}
-#username[aria-invalid="true"]{
-  border-color:rgba(255,150,150,.55);
-  box-shadow:0 0 0 4px rgba(255,140,140,.10);
-}
+    input {
+      width: 100%;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 9px;
+      background: #fff;
+      color: #111;
+      font: inherit;
+      outline: none;
+    }
 
-.btn-primary{
-  position:relative;
-  flex:0 0 auto;
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  height:56px;
-  padding:0 24px;
-  border-radius:var(--radius-md);
-  border:1px solid rgba(188,239,255,.55);
-  background:linear-gradient(180deg,#E8FBFF 0%,#BCEFFF 52%,#9BD8EE 100%);
-  color:#06222B;
-  font-size:.96rem;font-weight:600;letter-spacing:.005em;
-  white-space:nowrap;
-  cursor:pointer;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.85),
-    0 12px 32px -14px rgba(188,239,255,.7);
-  transition:transform .16s ease,box-shadow .22s ease,filter .22s ease;
-}
-.btn-primary:hover{
-  transform:translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.9),
-    0 16px 40px -14px rgba(188,239,255,.9);
-}
-.btn-primary:active{transform:translateY(0) scale(.992)}
-.btn-primary:focus-visible{outline:2px solid var(--text);outline-offset:3px}
-.btn-arrow{width:18px;height:18px;flex:none}
-.spinner{
-  display:none;
-  width:16px;height:16px;flex:none;
-  border-radius:50%;
-  border:2px solid rgba(6,34,43,.22);
-  border-top-color:#06222B;
-  animation:spin .7s linear infinite;
-}
-.btn-primary.is-busy .spinner{display:block}
-.btn-primary.is-busy .btn-arrow{display:none}
-@keyframes spin{to{transform:rotate(360deg)}}
+    input:focus {
+      border-color: #111;
+      box-shadow: 0 0 0 3px #11111112;
+    }
 
-.helper{
-  margin-top:13px;
-  font-size:.82rem;
-  color:var(--muted);
-  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
-}
-.helper .dot{opacity:.55}
+    button, .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 19px;
+      border: 1px solid #111;
+      border-radius: 9px;
+      background: #111;
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-.error{
-  display:flex;align-items:flex-start;gap:9px;
-  margin-top:13px;
-  padding:11px 13px;
-  border-radius:12px;
-  border:1px solid rgba(255,150,150,.28);
-  background:rgba(255,120,120,.07);
-  color:var(--danger);
-  font-size:.86rem;
-  line-height:1.5;
-}
-.error::before{
-  content:"!";
-  flex:none;
-  display:grid;place-items:center;
-  width:17px;height:17px;margin-top:1px;
-  border-radius:50%;
-  border:1px solid rgba(255,180,180,.6);
-  font-size:.68rem;font-weight:700;line-height:1;
-}
-.status{
-  margin-top:13px;
-  font-size:.86rem;
-  color:var(--ice);
-  line-height:1.55;
-}
-.status a{
-  color:var(--ice);
-  text-decoration:underline;
-  text-underline-offset:3px;
-}
-.status:empty{display:none}
+    button:hover, .button:hover {
+      background: #333;
+    }
 
-/* =========================================================
-   6. Introduction
-   ========================================================= */
-.intro{padding:clamp(38px,7vw,92px) 0 clamp(30px,5vw,60px)}
-.intro-grid{display:grid;gap:clamp(20px,3vw,36px)}
-@media (min-width:900px){
-  .intro-grid{grid-template-columns:1.12fr .88fr;gap:64px;align-items:end}
-}
-h1{
-  font-family:var(--font-display);
-  font-weight:400;
-  font-size:clamp(2.5rem,7.6vw,4.55rem);
-  line-height:1.03;
-  letter-spacing:-.018em;
-  text-wrap:balance;
-}
-h1 em{
-  font-style:italic;
-  color:var(--ice);
-  background:linear-gradient(100deg,#F4F8FA 0%,#BCEFFF 42%,#8FB6C4 96%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.lede{
-  font-size:clamp(1rem,1.35vw,1.12rem);
-  line-height:1.68;
-  color:var(--muted);
-  max-width:46ch;
-}
-@media (min-width:900px){
-  .lede{padding-bottom:8px}
-}
+    .hint, .error {
+      margin: 10px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
 
-/* =========================================================
-   7. About
-   ========================================================= */
-.about{padding:clamp(38px,7vw,92px) 0}
-.about-grid{display:grid;gap:clamp(24px,4vw,44px)}
-@media (min-width:900px){
-  .about-grid{grid-template-columns:300px 1fr;gap:72px}
-  .section-head{position:sticky;top:calc(var(--header-h) + 26px);align-self:start}
-}
-.section-head h2{
-  font-family:var(--font-display);
-  font-weight:400;
-  font-size:clamp(1.85rem,3.6vw,2.6rem);
-  line-height:1.1;
-  letter-spacing:-.015em;
-}
-.about-body .lead{
-  font-family:var(--font-display);
-  font-size:clamp(1.25rem,2vw,1.55rem);
-  line-height:1.42;
-  color:var(--text);
-  letter-spacing:-.008em;
-  margin-bottom:26px;
-  max-width:40ch;
-}
-.about-body p{
-  color:var(--muted);
-  font-size:1.01rem;
-  line-height:1.78;
-  max-width:64ch;
-  margin-bottom:18px;
-}
-.steps{margin-top:34px;border-top:1px solid var(--border)}
-.steps li{
-  display:grid;
-  grid-template-columns:auto 1fr;
-  gap:clamp(14px,2.5vw,26px);
-  padding:22px 0;
-  border-bottom:1px solid var(--border);
-}
-.step-num{
-  font-family:var(--font-display);
-  font-size:1.05rem;
-  letter-spacing:.06em;
-  color:var(--ice);
-  opacity:.85;
-  padding-top:1px;
-}
-.steps h3{
-  font-size:.98rem;
-  font-weight:600;
-  letter-spacing:-.005em;
-  margin-bottom:6px;
-  color:var(--text);
-}
-.steps p{
-  color:var(--muted);
-  font-size:.94rem;
-  line-height:1.68;
-  max-width:56ch;
-  margin:0;
-}
+    .error { color: #a01818; }
 
-/* =========================================================
-   8. FAQ
-   ========================================================= */
-.faq{padding:clamp(38px,7vw,92px) 0 clamp(30px,5vw,60px)}
-.faq-grid{display:grid;gap:clamp(24px,4vw,44px)}
-@media (min-width:900px){
-  .faq-grid{grid-template-columns:300px 1fr;gap:72px}
-}
-.faq-list{border-top:1px solid var(--border)}
-.faq-item{border-bottom:1px solid var(--border)}
-.faq-q{margin:0}
-.faq-trigger{
-  width:100%;
-  display:flex;align-items:center;justify-content:space-between;gap:22px;
-  padding:22px 2px;
-  background:none;border:0;
-  text-align:left;
-  cursor:pointer;
-  font-size:clamp(1rem,1.35vw,1.08rem);
-  font-weight:500;
-  letter-spacing:-.005em;
-  color:var(--text);
-  transition:color .2s ease;
-}
-.faq-trigger:hover{color:var(--ice)}
-.faq-icon{
-  position:relative;
-  width:15px;height:15px;flex:none;
-  color:var(--chrome);
-  transition:transform .3s ease,color .2s ease;
-}
-.faq-trigger:hover .faq-icon,
-.faq-trigger[aria-expanded="true"] .faq-icon{color:var(--ice)}
-.faq-trigger[aria-expanded="true"] .faq-icon{transform:rotate(180deg)}
-.faq-icon::before,
-.faq-icon::after{
-  content:"";position:absolute;background:currentColor;border-radius:2px;
-  transition:transform .3s ease,opacity .22s ease;
-}
-.faq-icon::before{left:0;right:0;top:50%;height:1.5px;transform:translateY(-50%)}
-.faq-icon::after{top:0;bottom:0;left:50%;width:1.5px;transform:translateX(-50%)}
-.faq-trigger[aria-expanded="true"] .faq-icon::after{transform:translateX(-50%) rotate(90deg);opacity:0}
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 25px 0 55px;
+    }
 
-.faq-panel{padding:0 44px 26px 2px}
-.faq-panel[hidden]{display:none}
-.faq-panel p{
-  color:var(--muted);
-  font-size:.97rem;
-  line-height:1.78;
-  max-width:66ch;
-}
-@media (prefers-reduced-motion: no-preference){
-  .faq-panel:not([hidden]){animation:panelIn .28s ease both}
-}
-@keyframes panelIn{
-  from{opacity:0;transform:translateY(-4px)}
-  to{opacity:1;transform:none}
-}
+    .feature {
+      padding: 21px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+    }
 
-/* =========================================================
-   9. Footer
-   ========================================================= */
-.site-footer{
-  margin-top:clamp(24px,5vw,56px);
-  border-top:1px solid var(--border);
-  background:linear-gradient(180deg, rgba(14,25,29,.55) 0%, rgba(9,16,19,1) 100%);
-  padding:clamp(38px,6vw,66px) 0 30px;
-}
-.footer-top{display:grid;gap:34px}
-@media (min-width:780px){
-  .footer-top{grid-template-columns:1.5fr 1fr;gap:64px;align-items:start}
-}
-.footer-brand{display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.footer-brand .brand-mark{width:26px;height:26px}
-.footer-brand .brand-name{font-size:1rem;font-weight:600;letter-spacing:-.012em}
-.footer-desc{
-  color:var(--muted);
-  font-size:.93rem;
-  line-height:1.7;
-  max-width:44ch;
-}
-.footer-nav ul{display:flex;flex-direction:column;gap:12px}
-.footer-link{
-  display:inline-block;
-  background:none;border:0;padding:2px 0;
-  color:var(--chrome);
-  font-size:.93rem;
-  text-align:left;
-  cursor:pointer;
-  border-bottom:1px solid transparent;
-  transition:color .2s ease,border-color .2s ease;
-}
-.footer-link:hover{color:var(--ice);border-bottom-color:rgba(188,239,255,.5)}
+    .number {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-.footer-bottom{
-  margin-top:38px;
-  padding-top:22px;
-  border-top:1px solid var(--border);
-  display:flex;flex-wrap:wrap;gap:14px 30px;
-  justify-content:space-between;align-items:flex-start;
-  font-size:.8rem;
-  color:var(--muted);
-}
-.footer-bottom p{max-width:62ch;line-height:1.65}
-.footer-bottom .copyright{white-space:nowrap;color:var(--chrome)}
+    .feature h2 {
+      margin: 13px 0 7px;
+      font-size: 18px;
+    }
 
-/* =========================================================
-   10. Document dialog
-   ========================================================= */
-.doc-dialog{
-  width:min(680px, calc(100vw - 28px));
-  max-height:88vh;
-  padding:0;
-  border:1px solid var(--border);
-  border-radius:var(--radius-lg);
-  background:linear-gradient(180deg,#0E191D 0%,#0A1216 100%);
-  color:var(--text);
-  box-shadow:0 50px 130px -34px rgba(0,0,0,.95);
-  overflow:hidden;
-}
-.doc-dialog::backdrop{
-  background:rgba(4,9,11,.74);
-  -webkit-backdrop-filter:blur(4px);
-  backdrop-filter:blur(4px);
-}
-.doc-head{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:18px 22px;
-  border-bottom:1px solid var(--border);
-}
-.doc-head h2{font-size:1.05rem;font-weight:600;letter-spacing:-.008em}
-.doc-close{
-  width:36px;height:36px;flex:none;
-  display:grid;place-items:center;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:rgba(197,203,210,.04);
-  color:var(--chrome);
-  cursor:pointer;
-  transition:border-color .2s ease,color .2s ease,background-color .2s ease;
-}
-.doc-close:hover{border-color:var(--border-strong);color:var(--text);background:rgba(197,203,210,.09)}
-.doc-body{
-  padding:20px 22px 26px;
-  max-height:64vh;
-  overflow-y:auto;
-  color:var(--muted);
-  font-size:.93rem;
-  line-height:1.75;
-}
-.doc-body h3{
-  color:var(--text);
-  font-size:.92rem;
-  font-weight:600;
-  margin:20px 0 6px;
-}
-.doc-body h3:first-child{margin-top:0}
-.doc-body p{margin-bottom:12px}
-.doc-body a{color:var(--ice);text-decoration:underline;text-underline-offset:3px}
-.doc-body .fine{font-size:.85rem;opacity:.85}
+    .feature p, .content p, .content li {
+      color: var(--muted);
+    }
 
-/* =========================================================
-   11. Responsive — mobile search stacking
-   ========================================================= */
-@media (max-width:600px){
-  .field-row{flex-direction:column;gap:12px}
-  .btn-primary{width:100%;height:54px;padding:0 20px}
-  #username{height:54px;font-size:1rem}
-  .faq-panel{padding-right:20px}
-}
+    .content {
+      max-width: 760px;
+      margin: 0 auto 60px;
+    }
 
-@media (max-width:780px){
-  .nav-toggle{display:block}
-  .primary-nav{
-    display:none;
-    position:absolute;
-    top:100%;left:0;right:0;
-    background:rgba(9,16,19,.98);
-    border-bottom:1px solid var(--border);
-    -webkit-backdrop-filter:blur(16px);
-    backdrop-filter:blur(16px);
-    padding:10px var(--pad) 18px;
-  }
-  .site-header[data-nav="open"] .primary-nav{display:block}
-  @media (prefers-reduced-motion: no-preference){
-    .site-header[data-nav="open"] .primary-nav{animation:navIn .22s ease both}
-  }
-  .primary-nav ul{flex-direction:column;align-items:stretch;gap:2px}
-  .nav-link{display:block;padding:13px 12px;border-radius:10px;font-size:.98rem}
-}
-@keyframes navIn{
-  from{opacity:0;transform:translateY(-6px)}
-  to{opacity:1;transform:none}
-}
+    .content h2 {
+      margin-top: 30px;
+      font-size: 24px;
+      line-height: 1.3;
+    }
 
-/* =========================================================
-   12. Reduced motion
-   ========================================================= */
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{
-    animation-duration:.001ms !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.001ms !important;
-    scroll-behavior:auto !important;
-  }
-}
-</style>
+    .notice {
+      padding: 15px;
+      border-left: 3px solid #111;
+      background: var(--soft);
+      border-radius: 0 8px 8px 0;
+    }
 
-<!-- Structured data: accurate WebSite entity only -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "PRView.site",
-  "alternateName": "PRView",
-  "url": "https://prview.site/",
-  "description": "PRView.site opens an Instagram profile directly from a username, with no password or login required.",
-  "inLanguage": "en"
-}
-</script>
+    footer {
+      padding: 23px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    @media (max-width: 650px) {
+      .hero { padding-top: 48px; }
+      .features { grid-template-columns: 1fr; }
+      .input-row { flex-direction: column; }
+      .input-row button { width: 100%; }
+      .search-card { padding: 17px; }
+      h1 { letter-spacing: -1px; }
+    }
+  </style>
 </head>
 
-<body id="top">
-<a class="sr-only" href="#search">Skip to the Instagram username search</a>
-
-<!-- =====================================================
-     Header
-     ===================================================== -->
-<header class="site-header" data-nav="closed">
-  <div class="wrap header-inner">
-    <a class="brand" href="#top" aria-label="PRView.site — back to top">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="brandGrad" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#F4F8FA"/>
-            <stop offset=".5" stop-color="#BCEFFF"/>
-            <stop offset="1" stop-color="#7E8F98"/>
-          </linearGradient>
-        </defs>
-        <circle cx="16" cy="16" r="8.4" fill="none" stroke="url(#brandGrad)" stroke-width="1.5"/>
-        <circle cx="16" cy="16" r="2.9" fill="#BCEFFF"/>
-        <path d="M16 2.2A13.8 13.8 0 0 1 29.8 16" fill="none" stroke="url(#brandGrad)"
-              stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M16 29.8A13.8 13.8 0 0 1 2.2 16" fill="none" stroke="#C5CBD2"
-              stroke-width="1.6" stroke-linecap="round" opacity=".45"/>
-      </svg>
-      <span class="brand-name">PRView<span class="brand-tld">.site</span></span>
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="/" aria-label="PRView.site homepage">
+      <span class="brand-mark">PR</span>View.site
     </a>
-
-    <button class="nav-toggle" type="button"
-            aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
-      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
-    </button>
-
-    <nav class="primary-nav" id="primary-nav" aria-label="Primary">
-      <ul>
-        <li><a class="nav-link" href="#top">Home</a></li>
-        <li><a class="nav-link" href="#about">About</a></li>
-        <li><a class="nav-link" href="#faq">FAQs</a></li>
-      </ul>
-    </nav>
+    <span class="nav-label">Instagram profile lookup</span>
   </div>
 </header>
 
-<main>
+<main class="container">
+  <section class="hero">
+    <span class="eyebrow">Simple · Free · Browser-based</span>
 
-  <!-- =====================================================
-       Search console — immediately below the header
-       ===================================================== -->
-  <section class="search-section" id="search" aria-label="Instagram profile search">
-    <div class="wrap">
-      <div class="console-wrap">
+    <h1 id="page-title">Find an Instagram Profile by Username</h1>
 
-        <!-- Signature visual: ice-lens orbit, decorative only -->
-        <svg class="orbit" viewBox="0 0 300 300" aria-hidden="true" focusable="false">
-          <defs>
-            <linearGradient id="orbitStroke" x1="30" y1="16" x2="272" y2="284" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#F4F8FA" stop-opacity=".92"/>
-              <stop offset=".36" stop-color="#BCEFFF" stop-opacity=".55"/>
-              <stop offset=".7" stop-color="#153037" stop-opacity=".28"/>
-              <stop offset="1" stop-color="#C5CBD2" stop-opacity=".5"/>
-            </linearGradient>
-          </defs>
-          <circle cx="150" cy="150" r="122" fill="none" stroke="url(#orbitStroke)" stroke-width="1"/>
-          <circle cx="150" cy="150" r="92" fill="none" stroke="url(#orbitStroke)"
-                  stroke-width=".65" stroke-dasharray="2 9" opacity=".7"/>
-          <g class="orbit-spin">
-            <path d="M150 28A122 122 0 0 1 272 150" fill="none" stroke="#BCEFFF"
-                  stroke-width="1.5" stroke-linecap="round" opacity=".9"/>
-            <circle cx="150" cy="28" r="3.4" fill="#BCEFFF"/>
-            <circle cx="272" cy="150" r="2" fill="#C5CBD2" opacity=".85"/>
-          </g>
-        </svg>
+    <p class="intro">
+      Enter an Instagram username to prepare a direct link to its profile.
+      Instagram controls profile availability and which content you can see.
+    </p>
 
-        <form class="console" id="search-form" novalidate>
-          <div class="console-head">
-            <span class="console-title">Profile viewer</span>
-            <span class="tag">Private Instagram Viewer</span>
-          </div>
+    <form class="search-card" id="username-form" action="result.html" method="get">
+      <label for="username">Instagram username</label>
 
-          <label class="field-label" for="username">Instagram Username</label>
-
-          <div class="field-row">
-            <div class="input-shell">
-              <svg class="at-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false">
-                <circle cx="12" cy="12" r="4"/>
-                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.9 7.9"/>
-              </svg>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                inputmode="text"
-                enterkeyhint="search"
-                autocomplete="off"
-                autocapitalize="none"
-                autocorrect="off"
-                spellcheck="false"
-                placeholder="Enter Instagram username"
-                aria-describedby="search-help search-error"
-                required>
-            </div>
-
-            <button class="btn-primary" type="submit" id="search-btn">
-              <span class="spinner" aria-hidden="true"></span>
-              <span class="btn-text">Search Instagram</span>
-              <svg class="btn-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor"
-                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                   aria-hidden="true" focusable="false">
-                <path d="M4 10h11M10.5 5.5 15 10l-4.5 4.5"/>
-              </svg>
-            </button>
-          </div>
-
-          <p class="helper" id="search-help">
-            No password required <span class="dot" aria-hidden="true">·</span> Opens the public profile
-          </p>
-          <p class="status" id="search-status" role="status" aria-live="polite"></p>
-        </form>
-
+      <div class="input-row">
+        <input
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Enter username"
+          maxlength="30"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          aria-describedby="username-hint username-error"
+          required
+        >
+        <button type="submit">Continue →</button>
       </div>
-    </div>
+
+      <p class="hint" id="username-hint">
+        Enter the username only. You do not need to include @ or the Instagram URL.
+      </p>
+      <p class="error" id="username-error" role="alert"></p>
+    </form>
   </section>
 
-  <!-- =====================================================
-       Introduction
-       ===================================================== -->
-  <section class="intro" id="intro">
-    <div class="wrap intro-grid">
-      <div>
-        <p class="eyebrow">Independent profile search</p>
-        <h1>Instagram Profiles, <em>Made Easier</em> to Find.</h1>
-      </div>
-      <div>
-        <p class="lede">
-          Enter a username to navigate directly to its Instagram profile with a simple,
-          convenient search experience.
-        </p>
-      </div>
-    </div>
+  <section class="features" aria-label="How the website works">
+    <article class="feature">
+      <span class="number">01</span>
+      <h2>Enter a username</h2>
+      <p>Type the Instagram username you want to look up.</p>
+    </article>
+
+    <article class="feature">
+      <span class="number">02</span>
+      <h2>Prepare the link</h2>
+      <p>Review the entered username before continuing to Instagram.</p>
+    </article>
+
+    <article class="feature">
+      <span class="number">03</span>
+      <h2>Open the profile</h2>
+      <p>Visit Instagram to see content available to your account.</p>
+    </article>
   </section>
 
-  <!-- =====================================================
-       About
-       ===================================================== -->
-  <section class="about" id="about">
-    <div class="wrap">
-      <div class="rule" aria-hidden="true"></div>
-      <div class="about-grid">
+  <section class="content">
+    <h2>What is PRView.site?</h2>
+    <p>
+      PRView.site is a simple browser-based tool that helps prepare an Instagram
+      profile link from a username. It does not need your Instagram password
+      and does not claim to retrieve private profile information.
+    </p>
 
-        <header class="section-head">
-          <p class="eyebrow">About</p>
-          <h2>What PRView.site does</h2>
-        </header>
+    <h2>Can this tool unlock private Instagram profiles?</h2>
+    <p>
+      No. Private accounts remain subject to Instagram's privacy settings.
+      If an account is private, send a follow request through Instagram and
+      wait for the account owner to approve it.
+    </p>
 
-        <div class="about-body">
-          <p class="lead">
-            PRView.site is a simple, independent shortcut from a username to a profile —
-            nothing more, nothing less.
-          </p>
+    <h2>How do I enter an Instagram username?</h2>
+    <p>
+      Enter the username without an @ symbol or a full URL. This form accepts
+      letters, numbers, periods, underscores and hyphens for input validation.
+      However, Instagram username rules do not officially allow hyphens, so
+      a username containing one may not identify a valid profile.
+    </p>
 
-          <p>
-            Type an Instagram username into the field above and PRView.site checks that the
-            format is valid, then opens that account's profile page on instagram.com in a new
-            tab. The whole interaction takes a few seconds and requires no account here.
-          </p>
+    <h2>Does PRView.site need my password?</h2>
+    <p>
+      No. Never enter your Instagram password, login code or recovery code
+      into this website. Profile access should take place directly on Instagram.
+    </p>
 
-          <ol class="steps">
-            <li>
-              <span class="step-num" aria-hidden="true">01</span>
-              <div>
-                <h3>Enter the username</h3>
-                <p>Type it exactly as it appears on Instagram — with or without the leading @.
-                   Periods and underscores are fine.</p>
-              </div>
-            </li>
-            <li>
-              <span class="step-num" aria-hidden="true">02</span>
-              <div>
-                <h3>PRView.site validates the format</h3>
-                <p>Usernames may contain letters, numbers, periods and underscores, up to
-                   30 characters. Invalid input is flagged before anything opens.</p>
-              </div>
-            </li>
-            <li>
-              <span class="step-num" aria-hidden="true">03</span>
-              <div>
-                <h3>Instagram opens in a new tab</h3>
-                <p>You land on the profile URL at instagram.com. Everything you see there —
-                   including whether the account is public or private — is controlled by
-                   Instagram.</p>
-              </div>
-            </li>
-          </ol>
-
-          <p style="margin-top:28px">
-            PRView.site never asks for an Instagram password, and there is nowhere on this site
-            to enter one. There is no login, no session, and no stored search history.
-          </p>
-
-          <p>
-            Profile visibility is decided by Instagram and by the account owner. Private accounts
-            remain private, and content that is restricted on Instagram stays restricted here as
-            well. PRView.site only points your browser at a public URL — it cannot reveal anything
-            Instagram does not already show.
-          </p>
-        </div>
-
-      </div>
-    </div>
+    <p class="notice">
+      <strong>Privacy note:</strong> The username is included in the next page's
+      URL so your browser can prepare the profile link. Do not submit sensitive
+      personal information.
+    </p>
   </section>
-
-  <!-- =====================================================
-       FAQ
-       ===================================================== -->
-  <section class="faq" id="faq">
-    <div class="wrap">
-      <div class="rule" aria-hidden="true"></div>
-      <div class="faq-grid">
-
-        <header class="section-head">
-          <p class="eyebrow">FAQs</p>
-          <h2>Questions, answered plainly</h2>
-        </header>
-
-        <div class="faq-list">
-
-          <div class="faq-item">
-            <h3 class="faq-q">
-              <button class="faq-trigger" type="button" id="faq-trigger-1"
-                      aria-expanded="false" aria-controls="faq-panel-1">
-                <span>What is PRView.site?</span>
-                <span class="faq-icon" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-1" role="region"
-                 aria-labelledby="faq-trigger-1" hidden>
-              <p>
-                PRView.site is an independent web tool that turns an Instagram username into a
-                direct link to that profile. It does not host Instagram content, does not require
-                an account, and does not store the usernames you look up.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <h3 class="faq-q">
-              <button class="faq-trigger" type="button" id="faq-trigger-2"
-                      aria-expanded="false" aria-controls="faq-panel-2">
-                <span>How do I search for an Instagram profile?</span>
-                <span class="faq-icon" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-2" role="region"
-                 aria-labelledby="faq-trigger-2" hidden>
-              <p>
-                Type the username into the field at the top of this page — with or without the
-                leading @ — then select “Search Instagram” or press Enter. A lookup page opens,
-                and from there a single button takes you to the profile on instagram.com.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <h3 class="faq-q">
-              <button class="faq-trigger" type="button" id="faq-trigger-3"
-                      aria-expanded="false" aria-controls="faq-panel-3">
-                <span>Do I need to provide my Instagram password?</span>
-                <span class="faq-icon" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-3" role="region"
-                 aria-labelledby="faq-trigger-3" hidden>
-              <p>
-                No. PRView.site never asks for a password, a login code, or any other
-                authentication detail, and there is no field on this site where one could be
-                entered. If any website asks you for your Instagram password in order to look up a
-                profile, do not provide it.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <h3 class="faq-q">
-              <button class="faq-trigger" type="button" id="faq-trigger-4"
-                      aria-expanded="false" aria-controls="faq-panel-4">
-                <span>Can PRView.site display private Instagram profiles?</span>
-                <span class="faq-icon" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-4" role="region"
-                 aria-labelledby="faq-trigger-4" hidden>
-              <p>
-                No. Whether a profile is visible is decided entirely by Instagram and by the
-                account owner. Private accounts stay private, and PRView.site cannot bypass,
-                unlock, or reveal them. It simply opens the public profile address in your browser.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <h3 class="faq-q">
-              <button class="faq-trigger" type="button" id="faq-trigger-5"
-                      aria-expanded="false" aria-controls="faq-panel-5">
-                <span>Why might a profile not open?</span>
-                <span class="faq-icon" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-5" role="region"
-                 aria-labelledby="faq-trigger-5" hidden>
-              <p>
-                A few common reasons: the username may be misspelled; the account may have been
-                renamed, deactivated, or deleted; Instagram may be temporarily unavailable; or your
-                browser may have blocked the new tab. If a new tab does not appear, check your
-                pop-up settings and try again.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <h3 class="faq-q">
-              <button class="faq-trigger" type="button" id="faq-trigger-6"
-                      aria-expanded="false" aria-controls="faq-panel-6">
-                <span>Is PRView.site affiliated with Instagram?</span>
-                <span class="faq-icon" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <div class="faq-panel" id="faq-panel-6" role="region"
-                 aria-labelledby="faq-trigger-6" hidden>
-              <p>
-                No. PRView.site is an independent website. It is not affiliated with, endorsed by,
-                sponsored by, or operated by Instagram or Meta Platforms, Inc. “Instagram” is a
-                trademark of its respective owner and is used here only to describe what this tool
-                links to.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
 </main>
 
-<!-- =====================================================
-     Footer
-     ===================================================== -->
-<footer class="site-footer">
-  <div class="wrap">
-    <div class="footer-top">
-
-      <div>
-        <div class="footer-brand">
-          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-            <defs>
-              <linearGradient id="brandGradFooter" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#F4F8FA"/>
-                <stop offset=".5" stop-color="#BCEFFF"/>
-                <stop offset="1" stop-color="#7E8F98"/>
-              </linearGradient>
-            </defs>
-            <circle cx="16" cy="16" r="8.4" fill="none" stroke="url(#brandGradFooter)" stroke-width="1.5"/>
-            <circle cx="16" cy="16" r="2.9" fill="#BCEFFF"/>
-            <path d="M16 2.2A13.8 13.8 0 0 1 29.8 16" fill="none" stroke="url(#brandGradFooter)"
-                  stroke-width="1.6" stroke-linecap="round"/>
-            <path d="M16 29.8A13.8 13.8 0 0 1 2.2 16" fill="none" stroke="#C5CBD2"
-                  stroke-width="1.6" stroke-linecap="round" opacity=".45"/>
-          </svg>
-          <span class="brand-name">PRView<span class="brand-tld">.site</span></span>
-        </div>
-        <p class="footer-desc">
-          PRView.site turns an Instagram username into a direct profile link. Independent,
-          free to use, and password-free.
-        </p>
-      </div>
-
-      <nav class="footer-nav" aria-label="Footer">
-        <ul>
-          <li><button class="footer-link" type="button" data-doc="privacy">Privacy Policy</button></li>
-          <li><button class="footer-link" type="button" data-doc="terms">Terms of Service</button></li>
-          <li><button class="footer-link" type="button" data-doc="contact">Contact</button></li>
-        </ul>
-      </nav>
-
-    </div>
-
-    <div class="footer-bottom">
-      <p class="copyright">© <span id="year">2025</span> PRView.site. All rights reserved.</p>
-      <p>
-        PRView.site is an independent website and is not affiliated with, endorsed by, or
-        sponsored by Instagram or Meta Platforms, Inc.
-      </p>
-    </div>
+<footer>
+  <div class="container footer-row">
+    <span>© <span id="year">2026</span> PRView.site</span>
+    <span>Independent website. Not affiliated with Instagram or Meta.</span>
   </div>
 </footer>
 
-<!-- =====================================================
-     Reusable document dialog (Privacy / Terms / Contact)
-     ===================================================== -->
-<dialog class="doc-dialog" id="doc-dialog" aria-labelledby="doc-title">
-  <div class="doc-head">
-    <h2 id="doc-title">Privacy Policy</h2>
-    <button class="doc-close" type="button" aria-label="Close dialog">
-      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor"
-           stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
-        <path d="M5 5l10 10M15 5L5 15"/>
-      </svg>
-    </button>
-  </div>
-  <div class="doc-body" id="doc-body"></div>
-</dialog>
-
 <script>
 (function () {
-  'use strict';
+  const form = document.getElementById("username-form");
+  const input = document.getElementById("username");
+  const error = document.getElementById("username-error");
+  const pattern = /^[A-Za-z0-9._-]{1,30}$/;
 
-  /* ---------------------------------------------------
-     Footer year
-     --------------------------------------------------- */
-  var yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  document.getElementById("year").textContent = new Date().getFullYear();
 
-  /* ---------------------------------------------------
-     Mobile navigation
-     --------------------------------------------------- */
-  var header    = document.querySelector('.site-header');
-  var navToggle = document.querySelector('.nav-toggle');
-  var navLinks  = document.querySelectorAll('#primary-nav a');
+  form.addEventListener("submit", function (event) {
+    const username = input.value.trim().replace(/^@/, "");
 
-  function closeNav() {
-    header.setAttribute('data-nav', 'closed');
-    navToggle.setAttribute('aria-expanded', 'false');
-    navToggle.setAttribute('aria-label', 'Open menu');
-  }
-
-  navToggle.addEventListener('click', function () {
-    var isOpen = header.getAttribute('data-nav') === 'open';
-    if (isOpen) {
-      closeNav();
-    } else {
-      header.setAttribute('data-nav', 'open');
-      navToggle.setAttribute('aria-expanded', 'true');
-      navToggle.setAttribute('aria-label', 'Close menu');
-    }
-  });
-
-  Array.prototype.forEach.call(navLinks, function (link) {
-    link.addEventListener('click', closeNav);
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && header.getAttribute('data-nav') === 'open') {
-      closeNav();
-      navToggle.focus();
-    }
-  });
-
-  document.addEventListener('click', function (e) {
-    if (header.getAttribute('data-nav') === 'open' && !header.contains(e.target)) {
-      closeNav();
-    }
-  });
-
-  // Reset the mobile panel when the viewport grows past the breakpoint.
-  if (window.matchMedia) {
-    var mq = window.matchMedia('(min-width: 781px)');
-    var onChange = function (e) { if (e.matches) closeNav(); };
-    if (mq.addEventListener) mq.addEventListener('change', onChange);
-    else if (mq.addListener) mq.addListener(onChange);
-  }
-
-  /* ---------------------------------------------------
-     Search: validate the username, then hand off to
-     the internal lookup page (/result.html)
-     --------------------------------------------------- */
-  var form     = document.getElementById('search-form');
-  var input    = document.getElementById('username');
-  var errorEl  = document.getElementById('search-error');
-  var statusEl = document.getElementById('search-status');
-  var button   = document.getElementById('search-btn');
-  var btnText  = button.querySelector('.btn-text');
-
-  var USERNAME_RE = /^[A-Za-z0-9._]{1,30}$/;
-  var busyTimer = null;
-
-  function showError(message) {
-    errorEl.textContent = message;
-    errorEl.hidden = false;
-    input.setAttribute('aria-invalid', 'true');
-  }
-
-  function clearError() {
-    errorEl.textContent = '';
-    errorEl.hidden = true;
-    input.removeAttribute('aria-invalid');
-  }
-
-  function setBusy(isBusy) {
-    button.classList.toggle('is-busy', isBusy);
-    btnText.textContent = isBusy ? 'Opening…' : 'Search Instagram';
-  }
-
-  // Clear the error as soon as the visitor edits the field.
-  input.addEventListener('input', function () {
-    if (!errorEl.hidden) clearError();
-    statusEl.textContent = '';
-  });
-
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    statusEl.textContent = '';
-
-    var value = input.value.trim();
-
-    // Accept a pasted profile URL as a convenience.
-    var urlMatch = value.match(/instagram\.com\/([^\/?#\s]+)/i);
-    if (urlMatch) value = urlMatch[1];
-
-    // Strip a leading @ and any surrounding whitespace.
-    value = value.trim().replace(/^@+/, '');
-
-    if (!value) {
-      showError('Enter an Instagram username to continue.');
-      input.focus();
+    if (!pattern.test(username)) {
+      event.preventDefault();
+      error.textContent =
+        "Enter 1–30 characters using letters, numbers, periods, underscores or hyphens.";
+      input.setAttribute("aria-invalid", "true");
       return;
     }
 
-    if (!USERNAME_RE.test(value)) {
-      showError('Usernames can use letters, numbers, periods and underscores — up to 30 characters.');
-      input.focus();
-      return;
-    }
-
-    clearError();
-
-    // Hand off to the internal lookup page. The username travels as a
-    // query parameter and is re-validated before any URL is built there.
-    var resultUrl = 'result.html?username=' + encodeURIComponent(value);
-
-    setBusy(true);
-    statusEl.textContent = 'Opening the lookup page for @' + value + '…';
-
-    if (busyTimer) window.clearTimeout(busyTimer);
-    busyTimer = window.setTimeout(function () {
-      window.location.assign(resultUrl);
-    }, 260);
+    input.value = username;
+    error.textContent = "";
+    input.removeAttribute("aria-invalid");
   });
 
-  /* ---------------------------------------------------
-     FAQ accordion (mouse + keyboard, semantic buttons)
-     --------------------------------------------------- */
-  var triggers = Array.prototype.slice.call(document.querySelectorAll('.faq-trigger'));
-
-  function closeAll(except) {
-    triggers.forEach(function (trigger) {
-      if (trigger === except) return;
-      trigger.setAttribute('aria-expanded', 'false');
-      var panel = document.getElementById(trigger.getAttribute('aria-controls'));
-      if (panel) panel.hidden = true;
-    });
-  }
-
-  triggers.forEach(function (trigger, index) {
-    trigger.addEventListener('click', function () {
-      var panel = document.getElementById(trigger.getAttribute('aria-controls'));
-      var isOpen = trigger.getAttribute('aria-expanded') === 'true';
-
-      closeAll(trigger);
-
-      if (isOpen) {
-        trigger.setAttribute('aria-expanded', 'false');
-        if (panel) panel.hidden = true;
-      } else {
-        trigger.setAttribute('aria-expanded', 'true');
-        if (panel) panel.hidden = false;
-      }
-    });
-
-    trigger.addEventListener('keydown', function (e) {
-      var target = null;
-      if (e.key === 'ArrowDown')      target = triggers[(index + 1) % triggers.length];
-      else if (e.key === 'ArrowUp')   target = triggers[(index - 1 + triggers.length) % triggers.length];
-      else if (e.key === 'Home')      target = triggers[0];
-      else if (e.key === 'End')       target = triggers[triggers.length - 1];
-
-      if (target) {
-        e.preventDefault();
-        target.focus();
-      }
-    });
-  });
-
-  /* ---------------------------------------------------
-     Footer documents (Privacy / Terms / Contact)
-     --------------------------------------------------- */
-  var DOCS = {
-    privacy: {
-      title: 'Privacy Policy',
-      html:
-        '<p class="fine">Last updated: this page describes how PRView.site handles information today.</p>' +
-        '<h3>What we collect</h3>' +
-        '<p>PRView.site does not require an account and does not ask for personal information. ' +
-        'There is no newsletter, no profile, and no login.</p>' +
-        '<h3>The username you type</h3>' +
-        '<p>The username you enter is processed in your own browser to build a link to ' +
-        'instagram.com. It is not submitted to, stored on, or shared by PRView.site.</p>' +
-        '<h3>Cookies and tracking</h3>' +
-        '<p>PRView.site does not set advertising cookies and does not track you across other ' +
-        'websites. If the site is delivered through a third-party hosting provider, that provider ' +
-        'may keep standard technical logs — such as IP address and request time — as part of ' +
-        'normal operation.</p>' +
-        '<h3>Links to Instagram</h3>' +
-        '<p>Searching opens a page on instagram.com in a new tab. Once you are there, Instagram’s ' +
-        'own privacy policy and terms apply.</p>' +
-        '<h3>Questions</h3>' +
-        '<p>For privacy questions or removal requests, contact ' +
-        '<a href="mailto:contact@prview.site">contact@prview.site</a>.</p>'
-    },
-    terms: {
-      title: 'Terms of Service',
-      html:
-        '<h3>Using PRView.site</h3>' +
-        '<p>PRView.site is provided free of charge, as-is, for personal convenience. By using it ' +
-        'you agree to use it only to open publicly accessible Instagram profiles and to comply ' +
-        'with Instagram’s own terms of use.</p>' +
-        '<h3>No guarantees</h3>' +
-        '<p>We do not guarantee that any profile will be available, reachable, or accurate. ' +
-        'Usernames change, accounts are deleted or deactivated, and Instagram may restrict access ' +
-        'at any time. PRView.site only builds a link — it does not control what Instagram returns.</p>' +
-        '<h3>Acceptable use</h3>' +
-        '<p>Do not use PRView.site to harass, impersonate, or attempt to access accounts you are ' +
-        'not authorised to view. Attempting to bypass Instagram’s access controls is not permitted ' +
-        'and is not possible through this site.</p>' +
-        '<h3>Independence</h3>' +
-        '<p>PRView.site is an independent website. It is not affiliated with, endorsed by, or ' +
-        'sponsored by Instagram or Meta Platforms, Inc.</p>' +
-        '<h3>Changes</h3>' +
-        '<p>The site may be updated, changed, or discontinued at any time without notice.</p>'
-    },
-    contact: {
-      title: 'Contact',
-      html:
-        '<p>For questions, corrections, or removal requests, email ' +
-        '<a href="mailto:contact@prview.site">contact@prview.site</a>.</p>' +
-        '<p class="fine">PRView.site is an independent project. It cannot help with Instagram ' +
-        'account recovery, access to private profiles, or anything that requires Instagram ' +
-        'account credentials — and it will never ask for them.</p>'
-    }
-  };
-
-  var dialog   = document.getElementById('doc-dialog');
-  var docTitle = document.getElementById('doc-title');
-  var docBody  = document.getElementById('doc-body');
-  var docClose = dialog.querySelector('.doc-close');
-
-  Array.prototype.forEach.call(document.querySelectorAll('[data-doc]'), function (btn) {
-    btn.addEventListener('click', function () {
-      var doc = DOCS[btn.getAttribute('data-doc')];
-      if (!doc) return;
-
-      docTitle.textContent = doc.title;
-      docBody.innerHTML = doc.html;
-
-      if (typeof dialog.showModal === 'function') {
-        dialog.showModal();
-      } else {
-        dialog.setAttribute('open', '');
-      }
-      docClose.focus();
-    });
-  });
-
-  docClose.addEventListener('click', function () {
-    if (typeof dialog.close === 'function') dialog.close();
-    else dialog.removeAttribute('open');
-  });
-
-  // Close when clicking the backdrop.
-  dialog.addEventListener('click', function (e) {
-    if (e.target === dialog) {
-      if (typeof dialog.close === 'function') dialog.close();
-      else dialog.removeAttribute('open');
-    }
+  input.addEventListener("input", function () {
+    error.textContent = "";
+    input.removeAttribute("aria-invalid");
   });
 })();
 </script>
