@@ -1,1395 +1,379 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#091013">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
 
-<!-- Primary SEO: result pages are generated from arbitrary usernames,
-     so they are noindexed and canonicalized to the main site. -->
-<title>Profile Lookup — PRView.site</title>
-<meta name="description" content="A visual lookup page for an Instagram username entered on PRView.site. PRView.site does not retrieve private profile data.">
-<link rel="canonical" href="https://prview.site/">
-<meta name="robots" content="noindex, follow">
+  <title>Instagram Profile Link | PRView.site</title>
+  <meta name="description" content="Review an Instagram username and continue to its profile on Instagram using PRView.site.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://prview.site/result.html">
 
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="PRView.site">
-<meta property="og:title" content="Profile Lookup — PRView.site">
-<meta property="og:description" content="A visual lookup page for an Instagram username entered on PRView.site.">
-<meta property="og:url" content="https://prview.site/result.html">
-<meta property="og:locale" content="en_US">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Instagram Profile Link | PRView.site">
+  <meta property="og:description" content="Review a username and open its Instagram profile page.">
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Profile Lookup — PRView.site">
-<meta name="twitter:description" content="A visual lookup page for an Instagram username entered on PRView.site.">
+  <style>
+    * { box-sizing: border-box; }
 
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      color: #111;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+    .container {
+      width: min(100% - 36px, 900px);
+      margin: auto;
+    }
 
-<style>
-/* =========================================================
-   1. Design tokens (identical to index.html)
-   ========================================================= */
-:root{
-  --bg:#091013;
-  --bg-2:#0E191D;
-  --teal:#153037;
-  --ice:#BCEFFF;
-  --chrome:#C5CBD2;
-  --text:#F4F8FA;
-  --muted:#9BAEB5;
-  --border:rgba(197,203,210,.16);
-  --border-strong:rgba(197,203,210,.28);
-  --danger:#FFB4B4;
+    header { border-bottom: 1px solid #e5e5e5; }
 
-  --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  --font-display:'Instrument Serif',Georgia,'Times New Roman',serif;
-  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
 
-  --radius-lg:20px;
-  --radius-md:14px;
-  --wrap:1180px;
-  --pad:clamp(18px,5vw,40px);
-  --header-h:66px;
-}
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-decoration: none;
+    }
 
-/* =========================================================
-   2. Reset & base
-   ========================================================= */
-*,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0;
-  min-height:100%;
-  font-family:var(--font-body);
-  font-size:16px;
-  line-height:1.6;
-  color:var(--text);
-  background-color:var(--bg);
-  background-image:
-    radial-gradient(1100px 620px at 8% -12%, rgba(21,48,55,.65), transparent 62%),
-    radial-gradient(900px 520px at 92% 2%, rgba(188,239,255,.055), transparent 60%),
-    radial-gradient(760px 760px at 50% 118%, rgba(21,48,55,.45), transparent 66%);
-  background-repeat:no-repeat;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-}
-img,svg{display:block;max-width:100%}
-button,input{font:inherit;color:inherit}
-h1,h2,h3,p,ul,ol{margin:0}
-ul,ol{padding:0;list-style:none}
-a{color:inherit}
+    .brand-mark {
+      display: inline-block;
+      border: 1px solid #111;
+      padding: 1px 7px;
+      border-radius: 6px;
+      margin-right: 5px;
+    }
 
-:focus-visible{outline:2px solid var(--ice);outline-offset:3px;border-radius:6px}
+    .back {
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+    }
 
-@media (prefers-reduced-motion: no-preference){
-  html{scroll-behavior:smooth}
-}
+    main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 40px 0;
+    }
 
-/* =========================================================
-   3. Utilities
-   ========================================================= */
-.wrap{
-  width:100%;
-  max-width:var(--wrap);
-  margin-inline:auto;
-  padding-inline:var(--pad);
-}
-.sr-only{
-  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
-}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:9px;
-  font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:16px;
-}
-.eyebrow::before{
-  content:"";width:22px;height:1px;flex:none;
-  background:linear-gradient(90deg,transparent,var(--ice));
-}
-.rule{
-  height:1px;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(197,203,210,.22) 18%,
-    rgba(188,239,255,.30) 50%,
-    rgba(197,203,210,.22) 82%,
-    transparent 100%);
-  margin-bottom:clamp(28px,5vw,56px);
-}
+    .panel {
+      width: 100%;
+      max-width: 650px;
+      padding: clamp(22px, 5vw, 38px);
+      border: 1px solid #e5e5e5;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 15px 45px #00000008;
+    }
 
-/* =========================================================
-   4. Header (identical to index.html)
-   ========================================================= */
-.site-header{
-  position:sticky;top:0;z-index:60;
-  background:rgba(9,16,19,.78);
-  border-bottom:1px solid var(--border);
-  -webkit-backdrop-filter:blur(16px) saturate(140%);
-  backdrop-filter:blur(16px) saturate(140%);
-}
-@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-  .site-header{background:rgba(9,16,19,.97)}
-}
-.header-inner{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  min-height:var(--header-h);
-}
-.brand{
-  display:inline-flex;align-items:center;gap:11px;
-  text-decoration:none;color:var(--text);
-  padding:6px 0;border-radius:8px;
-}
-.brand-mark{width:28px;height:28px;flex:none}
-.brand-name{font-weight:600;font-size:1.02rem;letter-spacing:-.012em}
-.brand-name .brand-tld{color:var(--muted);font-weight:500}
+    .eyebrow {
+      display: inline-block;
+      padding: 4px 11px;
+      border: 1px solid #e5e5e5;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-.primary-nav ul{display:flex;align-items:center;gap:4px}
-.nav-link{
-  display:inline-block;
-  padding:9px 15px;
-  border-radius:999px;
-  font-size:.9rem;font-weight:500;
-  color:var(--muted);text-decoration:none;
-  border:1px solid transparent;
-  transition:color .2s ease,border-color .2s ease,background-color .2s ease;
-}
-.nav-link:hover{color:var(--text);border-color:var(--border);background:rgba(197,203,210,.05)}
-.nav-link:focus-visible{color:var(--text)}
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(29px, 5vw, 42px);
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+    }
 
-.nav-toggle{
-  display:none;
-  position:relative;
-  width:42px;height:42px;flex:none;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:rgba(197,203,210,.04);
-  cursor:pointer;
-  transition:border-color .2s ease,background-color .2s ease;
-}
-.nav-toggle:hover{border-color:var(--border-strong);background:rgba(197,203,210,.08)}
-.nav-toggle .bars{position:absolute;inset:0}
-.nav-toggle .bars span{
-  position:absolute;left:11px;right:11px;height:1.5px;border-radius:2px;
-  background:var(--chrome);
-  transition:transform .26s ease,opacity .18s ease;
-}
-.nav-toggle .bars span:nth-child(1){top:15px}
-.nav-toggle .bars span:nth-child(2){top:21px}
-.nav-toggle .bars span:nth-child(3){top:27px}
-.nav-toggle[aria-expanded="true"] .bars span:nth-child(1){transform:translateY(6px) rotate(45deg)}
-.nav-toggle[aria-expanded="true"] .bars span:nth-child(2){opacity:0}
-.nav-toggle[aria-expanded="true"] .bars span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+    .muted { color: #666; }
 
-/* =========================================================
-   5. Result page layout
-   ========================================================= */
-.result-main{
-  padding:clamp(28px,5vw,60px) 0 clamp(40px,7vw,80px);
-}
-.result-head{
-  max-width:760px;
-  margin-bottom:clamp(22px,4vw,36px);
-}
-h1{
-  font-family:var(--font-display);
-  font-weight:400;
-  font-size:clamp(2rem,5.6vw,3.4rem);
-  line-height:1.06;
-  letter-spacing:-.018em;
-  text-wrap:balance;
-}
-h1 em{
-  font-style:italic;
-  background:linear-gradient(100deg,#F4F8FA 0%,#BCEFFF 42%,#8FB6C4 96%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.result-lede{
-  margin-top:14px;
-  color:var(--muted);
-  font-size:clamp(.98rem,1.3vw,1.08rem);
-  line-height:1.68;
-  max-width:52ch;
-}
+    .userbox {
+      margin: 22px 0;
+      padding: 14px 16px;
+      border: 1px solid #e5e5e5;
+      border-radius: 11px;
+      background: #f7f7f7;
+      overflow-wrap: anywhere;
+    }
 
-/* Username chip */
-.username-chip{
-  display:inline-flex;align-items:center;gap:10px;
-  margin-top:20px;
-  padding:10px 16px;
-  border-radius:999px;
-  border:1px solid var(--border-strong);
-  background:linear-gradient(180deg, rgba(21,48,55,.7) 0%, rgba(14,25,29,.9) 100%);
-  box-shadow:inset 0 1px 0 rgba(244,248,250,.06);
-  font-family:var(--font-mono);
-  font-size:.95rem;
-  letter-spacing:.005em;
-  color:var(--text);
-  max-width:100%;
-  word-break:break-all;
-}
-.username-chip .at{color:var(--ice);opacity:.85;flex:none}
-.username-chip .name{
-  overflow-wrap:anywhere;
-}
+    .user-label {
+      display: block;
+      color: #666;
+      font-size: 13px;
+    }
 
-/* Console panel */
-.console{
-  position:relative;
-  max-width:760px;
-  padding:clamp(18px,3vw,26px);
-  border-radius:var(--radius-lg);
-  border:1px solid var(--border);
-  background:
-    linear-gradient(180deg, rgba(21,48,55,.66) 0%, rgba(14,25,29,.92) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(244,248,250,.07),
-    inset 0 0 0 1px rgba(9,16,19,.35),
-    0 34px 70px -34px rgba(0,0,0,.95);
-  -webkit-backdrop-filter:blur(18px) saturate(130%);
-  backdrop-filter:blur(18px) saturate(130%);
-}
-@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-  .console{background:linear-gradient(180deg,#122A31 0%,#0E191D 100%)}
-}
-.console::before{
-  content:"";
-  position:absolute;top:0;left:12%;right:12%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(188,239,255,.55),rgba(197,203,210,.25),transparent);
-}
+    #display-username {
+      font-size: 18px;
+      font-weight: 700;
+    }
 
-.console-head{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  margin-bottom:16px;
-}
-.console-title{
-  display:inline-flex;align-items:center;gap:9px;
-  font-size:.68rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--muted);
-}
-.console-title::before{
-  content:"";width:6px;height:6px;border-radius:50%;
-  background:var(--ice);
-  box-shadow:0 0 10px rgba(188,239,255,.85);
-}
-.console-meta{
-  display:inline-flex;align-items:center;gap:14px;
-  font-family:var(--font-mono);
-  font-size:.72rem;
-  color:var(--muted);
-  letter-spacing:.03em;
-  white-space:nowrap;
-}
-.console-meta .val{color:var(--ice)}
-@media (max-width:400px){
-  .console-meta .sep-hide{display:none}
-}
+    .terminal {
+      min-height: 190px;
+      padding: 17px;
+      border: 1px solid #222;
+      border-radius: 12px;
+      background: #111;
+      color: #f5f5f5;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 14px;
+    }
 
-/* Terminal window */
-.terminal{
-  border-radius:var(--radius-md);
-  border:1px solid var(--border);
-  background:rgba(6,11,14,.72);
-  overflow:hidden;
-}
-@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-  .terminal{background:#070D10}
-}
-.terminal-bar{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 14px;
-  border-bottom:1px solid var(--border);
-  background:rgba(21,48,55,.4);
-}
-.dots{display:inline-flex;gap:6px;flex:none}
-.dots span{
-  width:9px;height:9px;border-radius:50%;
-  background:rgba(197,203,210,.22);
-}
-.dots span:first-child{background:rgba(188,239,255,.55)}
-.terminal-path{
-  font-family:var(--font-mono);
-  font-size:.72rem;
-  color:var(--muted);
-  letter-spacing:.03em;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
+    .terminal-head {
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #333;
+      color: #bbb;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+    }
 
-.terminal-body{
-  padding:clamp(14px,2.4vw,20px);
-  font-family:var(--font-mono);
-  font-size:clamp(.78rem,1.9vw,.86rem);
-  line-height:1.85;
-  min-height:220px;
-  max-height:340px;
-  overflow-y:auto;
-  scrollbar-width:thin;
-}
-.term-line{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-  color:var(--chrome);
-  word-break:break-word;
-}
-.term-line + .term-line{margin-top:2px}
-.term-line .prompt{
-  color:var(--ice);
-  flex:none;
-  opacity:.9;
-}
-.term-line .text{min-width:0}
-.term-line.is-done .text{color:var(--text)}
-.term-line.is-active .text{color:var(--ice)}
-.term-line .tick{
-  color:var(--ice);
-  flex:none;
-  opacity:.9;
-}
-.term-line .pending{
-  color:var(--muted);
-  flex:none;
-  opacity:.7;
-}
-.caret{
-  display:inline-block;
-  width:8px;height:1em;
-  margin-left:2px;
-  vertical-align:-2px;
-  background:var(--ice);
-  opacity:.85;
-}
-@media (prefers-reduced-motion: no-preference){
-  .caret{animation:caretBlink 1s steps(1) infinite}
-}
-@keyframes caretBlink{50%{opacity:0}}
+    #log {
+      min-height: 90px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
 
-/* Progress bar */
-.progress-wrap{
-  margin-top:16px;
-  display:flex;align-items:center;gap:14px;
-}
-.progress-track{
-  flex:1 1 auto;
-  height:6px;
-  border-radius:999px;
-  background:rgba(9,16,19,.7);
-  border:1px solid var(--border);
-  overflow:hidden;
-}
-.progress-fill{
-  height:100%;
-  width:0%;
-  border-radius:999px;
-  background:linear-gradient(90deg,#8FB6C4 0%,#BCEFFF 60%,#E8FBFF 100%);
-  box-shadow:0 0 14px -2px rgba(188,239,255,.7);
-  transition:width .35s ease;
-}
-.progress-time{
-  font-family:var(--font-mono);
-  font-size:.78rem;
-  color:var(--muted);
-  letter-spacing:.03em;
-  flex:none;
-  min-width:74px;
-  text-align:right;
-}
-.progress-time .elapsed{color:var(--ice)}
+    .progress-track {
+      height: 5px;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #333;
+    }
 
-/* Reduced-motion progress: simple, calm indicator */
-.rm-progress{
-  display:none;
-  margin-top:16px;
-  padding:12px 14px;
-  border-radius:var(--radius-md);
-  border:1px solid var(--border);
-  background:rgba(9,16,19,.55);
-  font-family:var(--font-mono);
-  font-size:.82rem;
-  color:var(--muted);
-}
-.rm-progress .rm-row{
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-}
-.rm-progress .rm-label{color:var(--chrome)}
-.rm-progress .rm-time{color:var(--ice)}
+    #progress-bar {
+      width: 0;
+      height: 100%;
+      background: #fff;
+      transition: width .2s linear;
+    }
 
-/* Disclaimer */
-.disclaimer{
-  margin-top:16px;
-  display:flex;align-items:flex-start;gap:9px;
-  font-size:.78rem;
-  line-height:1.6;
-  color:var(--muted);
-  max-width:70ch;
-}
-.disclaimer::before{
-  content:"i";
-  flex:none;
-  display:grid;place-items:center;
-  width:16px;height:16px;margin-top:2px;
-  border-radius:50%;
-  border:1px solid var(--border-strong);
-  font-family:var(--font-display);
-  font-size:.72rem;
-  font-style:italic;
-  color:var(--chrome);
-}
+    #status {
+      color: #666;
+      font-size: 14px;
+    }
 
-/* =========================================================
-   6. Result actions
-   ========================================================= */
-.actions{
-  max-width:760px;
-  margin-top:clamp(22px,4vw,32px);
-}
-.actions[hidden]{display:none}
-.actions-inner{
-  position:relative;
-  padding:clamp(18px,3vw,26px);
-  border-radius:var(--radius-lg);
-  border:1px solid var(--border);
-  background:linear-gradient(180deg, rgba(21,48,55,.6) 0%, rgba(14,25,29,.92) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(244,248,250,.07),
-    0 34px 70px -34px rgba(0,0,0,.95);
-}
-.actions-inner::before{
-  content:"";
-  position:absolute;top:0;left:12%;right:12%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(188,239,255,.55),rgba(197,203,210,.25),transparent);
-}
-.actions-title{
-  font-family:var(--font-display);
-  font-weight:400;
-  font-size:clamp(1.3rem,2.6vw,1.7rem);
-  letter-spacing:-.01em;
-  line-height:1.2;
-  margin-bottom:8px;
-}
-.actions-sub{
-  color:var(--muted);
-  font-size:.94rem;
-  line-height:1.65;
-  max-width:52ch;
-  margin-bottom:20px;
-}
-.btn-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-.btn{
-  position:relative;
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  height:54px;
-  padding:0 24px;
-  border-radius:var(--radius-md);
-  font-size:.95rem;font-weight:600;letter-spacing:.005em;
-  text-decoration:none;
-  cursor:pointer;
-  transition:transform .16s ease,box-shadow .22s ease,border-color .2s ease,color .2s ease,background-color .2s ease;
-  white-space:nowrap;
-}
-.btn svg{width:18px;height:18px;flex:none}
-.btn:active{transform:translateY(0) scale(.992)}
+    .actions {
+      display: none;
+      margin-top: 20px;
+    }
 
-.btn-primary{
-  border:1px solid rgba(188,239,255,.55);
-  background:linear-gradient(180deg,#E8FBFF 0%,#BCEFFF 52%,#9BD8EE 100%);
-  color:#06222B;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.85),
-    0 12px 32px -14px rgba(188,239,255,.7);
-}
-.btn-primary:hover{
-  transform:translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.9),
-    0 16px 40px -14px rgba(188,239,255,.9);
-}
-.btn-primary:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+    .actions.show { display: block; }
 
-.btn-secondary{
-  border:1px solid var(--border-strong);
-  background:rgba(197,203,210,.05);
-  color:var(--chrome);
-}
-.btn-secondary:hover{
-  color:var(--text);
-  border-color:rgba(188,239,255,.45);
-  background:rgba(197,203,210,.09);
-}
-.btn-secondary:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 18px;
+      border: 1px solid #111;
+      border-radius: 9px;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+    }
 
-/* Reveal animation */
-@media (prefers-reduced-motion: no-preference){
-  .actions-inner{animation:reveal .5s ease both}
-}
-@keyframes reveal{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:none}
-}
+    .button:hover { background: #333; }
 
-/* Invalid state */
-.invalid-panel{
-  max-width:760px;
-}
-.invalid-panel[hidden]{display:none}
-.invalid-inner{
-  padding:clamp(20px,3.4vw,30px);
-  border-radius:var(--radius-lg);
-  border:1px solid rgba(255,150,150,.28);
-  background:linear-gradient(180deg, rgba(255,120,120,.08) 0%, rgba(14,25,29,.9) 100%);
-}
-.invalid-inner h2{
-  font-family:var(--font-display);
-  font-weight:400;
-  font-size:clamp(1.4rem,3vw,1.9rem);
-  line-height:1.15;
-  letter-spacing:-.012em;
-  margin-bottom:10px;
-}
-.invalid-inner p{
-  color:var(--muted);
-  font-size:.96rem;
-  line-height:1.7;
-  max-width:56ch;
-  margin-bottom:20px;
-}
+    .secondary {
+      display: block;
+      margin-top: 13px;
+      color: #555;
+      text-align: center;
+      font-size: 14px;
+    }
 
-/* =========================================================
-   7. Footer (identical to index.html)
-   ========================================================= */
-.site-footer{
-  margin-top:clamp(24px,5vw,56px);
-  border-top:1px solid var(--border);
-  background:linear-gradient(180deg, rgba(14,25,29,.55) 0%, rgba(9,16,19,1) 100%);
-  padding:clamp(38px,6vw,66px) 0 30px;
-}
-.footer-top{display:grid;gap:34px}
-@media (min-width:780px){
-  .footer-top{grid-template-columns:1.5fr 1fr;gap:64px;align-items:start}
-}
-.footer-brand{display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.footer-brand .brand-mark{width:26px;height:26px}
-.footer-brand .brand-name{font-size:1rem;font-weight:600;letter-spacing:-.012em}
-.footer-desc{
-  color:var(--muted);
-  font-size:.93rem;
-  line-height:1.7;
-  max-width:44ch;
-}
-.footer-nav ul{display:flex;flex-direction:column;gap:12px}
-.footer-link{
-  display:inline-block;
-  background:none;border:0;padding:2px 0;
-  color:var(--chrome);
-  font-size:.93rem;
-  text-align:left;
-  cursor:pointer;
-  border-bottom:1px solid transparent;
-  transition:color .2s ease,border-color .2s ease;
-}
-.footer-link:hover{color:var(--ice);border-bottom-color:rgba(188,239,255,.5)}
+    .notice {
+      margin-top: 19px;
+      color: #666;
+      font-size: 13px;
+    }
 
-.footer-bottom{
-  margin-top:38px;
-  padding-top:22px;
-  border-top:1px solid var(--border);
-  display:flex;flex-wrap:wrap;gap:14px 30px;
-  justify-content:space-between;align-items:flex-start;
-  font-size:.8rem;
-  color:var(--muted);
-}
-.footer-bottom p{max-width:62ch;line-height:1.65}
-.footer-bottom .copyright{white-space:nowrap;color:var(--chrome)}
+    #error {
+      display: none;
+      padding: 12px;
+      border: 1px solid #e5bcbc;
+      border-radius: 9px;
+      background: #fff7f7;
+      color: #8c1b1b;
+    }
 
-/* =========================================================
-   8. Document dialog (identical to index.html)
-   ========================================================= */
-.doc-dialog{
-  width:min(680px, calc(100vw - 28px));
-  max-height:88vh;
-  padding:0;
-  border:1px solid var(--border);
-  border-radius:var(--radius-lg);
-  background:linear-gradient(180deg,#0E191D 0%,#0A1216 100%);
-  color:var(--text);
-  box-shadow:0 50px 130px -34px rgba(0,0,0,.95);
-  overflow:hidden;
-}
-.doc-dialog::backdrop{
-  background:rgba(4,9,11,.74);
-  -webkit-backdrop-filter:blur(4px);
-  backdrop-filter:blur(4px);
-}
-.doc-head{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:18px 22px;
-  border-bottom:1px solid var(--border);
-}
-.doc-head h2{font-size:1.05rem;font-weight:600;letter-spacing:-.008em}
-.doc-close{
-  width:36px;height:36px;flex:none;
-  display:grid;place-items:center;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:rgba(197,203,210,.04);
-  color:var(--chrome);
-  cursor:pointer;
-  transition:border-color .2s ease,color .2s ease,background-color .2s ease;
-}
-.doc-close:hover{border-color:var(--border-strong);color:var(--text);background:rgba(197,203,210,.09)}
-.doc-body{
-  padding:20px 22px 26px;
-  max-height:64vh;
-  overflow-y:auto;
-  color:var(--muted);
-  font-size:.93rem;
-  line-height:1.75;
-}
-.doc-body h3{
-  color:var(--text);
-  font-size:.92rem;
-  font-weight:600;
-  margin:20px 0 6px;
-}
-.doc-body h3:first-child{margin-top:0}
-.doc-body p{margin-bottom:12px}
-.doc-body a{color:var(--ice);text-decoration:underline;text-underline-offset:3px}
-.doc-body .fine{font-size:.85rem;opacity:.85}
+    footer {
+      padding: 22px 0;
+      border-top: 1px solid #e5e5e5;
+      color: #666;
+      font-size: 13px;
+    }
 
-/* =========================================================
-   9. Responsive
-   ========================================================= */
-@media (max-width:600px){
-  .btn{width:100%}
-  .btn-row{flex-direction:column}
-}
+    @media (max-width: 600px) {
+      .nav { min-height: 62px; }
+      main { padding: 25px 0; align-items: start; }
+      .terminal { font-size: 12px; padding: 14px; }
+    }
 
-@media (max-width:780px){
-  .nav-toggle{display:block}
-  .primary-nav{
-    display:none;
-    position:absolute;
-    top:100%;left:0;right:0;
-    background:rgba(9,16,19,.98);
-    border-bottom:1px solid var(--border);
-    -webkit-backdrop-filter:blur(16px);
-    backdrop-filter:blur(16px);
-    padding:10px var(--pad) 18px;
-  }
-  .site-header[data-nav="open"] .primary-nav{display:block}
-  @media (prefers-reduced-motion: no-preference){
-    .site-header[data-nav="open"] .primary-nav{animation:navIn .22s ease both}
-  }
-  .primary-nav ul{flex-direction:column;align-items:stretch;gap:2px}
-  .nav-link{display:block;padding:13px 12px;border-radius:10px;font-size:.98rem}
-}
-@keyframes navIn{
-  from{opacity:0;transform:translateY(-6px)}
-  to{opacity:1;transform:none}
-}
-
-/* =========================================================
-   10. Reduced motion
-   ========================================================= */
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{
-    animation-duration:.001ms !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.001ms !important;
-    scroll-behavior:auto !important;
-  }
-}
-</style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
 
-<body id="top">
-<a class="sr-only" href="#lookup">Skip to the lookup panel</a>
-
-<!-- =====================================================
-     Header (identical to index.html)
-     ===================================================== -->
-<header class="site-header" data-nav="closed">
-  <div class="wrap header-inner">
-    <a class="brand" href="index.html" aria-label="PRView.site — back to the homepage">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="brandGrad" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#F4F8FA"/>
-            <stop offset=".5" stop-color="#BCEFFF"/>
-            <stop offset="1" stop-color="#7E8F98"/>
-          </linearGradient>
-        </defs>
-        <circle cx="16" cy="16" r="8.4" fill="none" stroke="url(#brandGrad)" stroke-width="1.5"/>
-        <circle cx="16" cy="16" r="2.9" fill="#BCEFFF"/>
-        <path d="M16 2.2A13.8 13.8 0 0 1 29.8 16" fill="none" stroke="url(#brandGrad)"
-              stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M16 29.8A13.8 13.8 0 0 1 2.2 16" fill="none" stroke="#C5CBD2"
-              stroke-width="1.6" stroke-linecap="round" opacity=".45"/>
-      </svg>
-      <span class="brand-name">PRView<span class="brand-tld">.site</span></span>
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="/" aria-label="PRView.site homepage">
+      <span class="brand-mark">PR</span>View.site
     </a>
-
-    <button class="nav-toggle" type="button"
-            aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
-      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
-    </button>
-
-    <nav class="primary-nav" id="primary-nav" aria-label="Primary">
-      <ul>
-        <li><a class="nav-link" href="index.html">Home</a></li>
-        <li><a class="nav-link" href="index.html#about">About</a></li>
-        <li><a class="nav-link" href="index.html#faq">FAQs</a></li>
-      </ul>
-    </nav>
+    <a class="back" href="/">← Back to search</a>
   </div>
 </header>
 
-<main class="result-main" id="lookup">
-  <div class="wrap">
+<main class="container">
+  <section class="panel">
+    <span class="eyebrow">Profile link preparation</span>
 
-    <!-- ============================
-         Heading + username chip
-         ============================ -->
-    <div class="result-head">
-      <p class="eyebrow">Profile lookup</p>
-      <h1>Preparing the <em>profile link</em>.</h1>
-      <p class="result-lede">
-        PRView.site is running a visual lookup sequence for the username you entered.
-        When the sequence finishes, a button appears that opens the profile on Instagram.
-      </p>
-      <p class="username-chip" id="username-chip" hidden>
-        <span class="at" aria-hidden="true">@</span>
-        <span class="name" id="username-display"></span>
-      </p>
+    <h1>Your Instagram Profile Link</h1>
+
+    <p class="muted">
+      Review the username below. After the page steps finish, you can continue
+      to Instagram.
+    </p>
+
+    <div class="userbox">
+      <span class="user-label">Entered username</span>
+      <span id="display-username">@username</span>
     </div>
 
-    <!-- ============================
-         Invalid-parameter panel
-         ============================ -->
-    <div class="invalid-panel" id="invalid-panel" hidden>
-      <div class="invalid-inner">
-        <h2>That username doesn’t look right.</h2>
-        <p>
-          A valid Instagram username uses letters, numbers, periods, and underscores,
-          up to 30 characters. Nothing was opened. Return to the homepage and try again.
-        </p>
-        <div class="btn-row">
-          <a class="btn btn-primary" href="index.html#search">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M16 10H5M9.5 5.5 5 10l4.5 4.5"/>
-            </svg>
-            Back to search
-          </a>
-        </div>
+    <div class="terminal">
+      <div class="terminal-head">● &nbsp; ● &nbsp; ● &nbsp; PRView status</div>
+      <div id="log" role="status" aria-live="polite">
+        Starting page checks...
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div id="progress-bar"></div>
       </div>
     </div>
 
-    <!-- ============================
-         Terminal console
-         ============================ -->
-    <section class="console" id="console" aria-labelledby="console-heading">
-      <div class="console-head">
-        <h2 class="console-title" id="console-heading">Lookup sequence</h2>
-        <p class="console-meta">
-          <span><span class="sep-hide">elapsed </span><span class="val" id="meta-elapsed">00.0s</span></span>
-          <span class="sep-hide" aria-hidden="true">·</span>
-          <span><span class="sep-hide">target </span><span class="val">30s</span></span>
-        </p>
-      </div>
+    <p id="status">Preparing your profile link...</p>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
-          <span class="terminal-path">prview.site — lookup</span>
-        </div>
+    <p id="error" role="alert"></p>
 
-        <div class="terminal-body" id="terminal-body">
-          <!-- Lines are injected by JavaScript. -->
-          <div class="term-line is-active" id="term-placeholder">
-            <span class="prompt" aria-hidden="true">&gt;</span>
-            <span class="text">Initializing profile lookup interface…<span class="caret" aria-hidden="true"></span></span>
-          </div>
-        </div>
-      </div>
+    <div class="actions" id="actions">
+      <a
+        class="button"
+        id="open-profile"
+        href="https://www.instagram.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open Instagram Profile ↗
+      </a>
 
-      <!-- Full progress bar (default) -->
-      <div class="progress-wrap" id="progress-wrap">
-        <div class="progress-track" role="progressbar"
-             aria-label="Lookup sequence progress"
-             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
-             id="progress-bar">
-          <div class="progress-fill" id="progress-fill"></div>
-        </div>
-        <p class="progress-time"><span class="elapsed" id="progress-elapsed">00.0s</span> / 30.0s</p>
-      </div>
+      <a class="secondary" href="/">Search another username</a>
+    </div>
 
-      <!-- Reduced-motion simplified indicator -->
-      <div class="rm-progress" id="rm-progress" role="status" aria-live="polite" hidden>
-        <div class="rm-row">
-          <span class="rm-label">Running lookup sequence…</span>
-          <span class="rm-time"><span id="rm-elapsed">00.0s</span> / 30.0s</span>
-        </div>
-      </div>
-
-      <p class="disclaimer">
-        This is a visual progress sequence. PRView.site does not retrieve private profile data.
-      </p>
-
-      <!-- Screen-reader live region for progress announcements -->
-      <p class="sr-only" id="sr-status" role="status" aria-live="polite"></p>
-    </section>
-
-    <!-- ============================
-         Result actions (revealed after the timer)
-         ============================ -->
-    <section class="actions" id="actions" aria-labelledby="actions-title" hidden>
-      <div class="actions-inner">
-        <h2 class="actions-title" id="actions-title">Ready when you are.</h2>
-        <p class="actions-sub">
-          The sequence has finished. Open the profile on Instagram, or start over with a
-          different username. PRView.site only builds the link — Instagram decides what
-          is shown.
-        </p>
-        <div class="btn-row">
-          <a class="btn btn-primary"
-             id="open-profile"
-             href="https://www.instagram.com/"
-             target="_blank"
-             rel="noopener noreferrer">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 10h11M10.5 5.5 15 10l-4.5 4.5"/>
-            </svg>
-            Open Instagram Profile
-          </a>
-          <a class="btn btn-secondary" href="index.html#search">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M16 10H5M9.5 5.5 5 10l4.5 4.5"/>
-            </svg>
-            Search another username
-          </a>
-        </div>
-      </div>
-    </section>
-
-  </div>
+    <p class="notice">
+      This page does not retrieve private Instagram data or bypass privacy
+      settings. Instagram controls profile access and visibility.
+    </p>
+  </section>
 </main>
 
-<!-- =====================================================
-     Footer (identical to index.html)
-     ===================================================== -->
-<footer class="site-footer">
-  <div class="wrap">
-    <div class="footer-top">
-
-      <div>
-        <div class="footer-brand">
-          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-            <defs>
-              <linearGradient id="brandGradFooter" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#F4F8FA"/>
-                <stop offset=".5" stop-color="#BCEFFF"/>
-                <stop offset="1" stop-color="#7E8F98"/>
-              </linearGradient>
-            </defs>
-            <circle cx="16" cy="16" r="8.4" fill="none" stroke="url(#brandGradFooter)" stroke-width="1.5"/>
-            <circle cx="16" cy="16" r="2.9" fill="#BCEFFF"/>
-            <path d="M16 2.2A13.8 13.8 0 0 1 29.8 16" fill="none" stroke="url(#brandGradFooter)"
-                  stroke-width="1.6" stroke-linecap="round"/>
-            <path d="M16 29.8A13.8 13.8 0 0 1 2.2 16" fill="none" stroke="#C5CBD2"
-                  stroke-width="1.6" stroke-linecap="round" opacity=".45"/>
-          </svg>
-          <span class="brand-name">PRView<span class="brand-tld">.site</span></span>
-        </div>
-        <p class="footer-desc">
-          PRView.site turns an Instagram username into a direct profile link. Independent,
-          free to use, and password-free.
-        </p>
-      </div>
-
-      <nav class="footer-nav" aria-label="Footer">
-        <ul>
-          <li><button class="footer-link" type="button" data-doc="privacy">Privacy Policy</button></li>
-          <li><button class="footer-link" type="button" data-doc="terms">Terms of Service</button></li>
-          <li><button class="footer-link" type="button" data-doc="contact">Contact</button></li>
-        </ul>
-      </nav>
-
-    </div>
-
-    <div class="footer-bottom">
-      <p class="copyright">© <span id="year">2025</span> PRView.site. All rights reserved.</p>
-      <p>
-        PRView.site is an independent website and is not affiliated with, endorsed by, or
-        sponsored by Instagram or Meta Platforms, Inc.
-      </p>
-    </div>
+<footer>
+  <div class="container">
+    © <span id="year">2026</span> PRView.site · Independent website, not affiliated with Instagram or Meta.
   </div>
 </footer>
 
-<!-- =====================================================
-     Reusable document dialog
-     ===================================================== -->
-<dialog class="doc-dialog" id="doc-dialog" aria-labelledby="doc-title">
-  <div class="doc-head">
-    <h2 id="doc-title">Privacy Policy</h2>
-    <button class="doc-close" type="button" aria-label="Close dialog">
-      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor"
-           stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
-        <path d="M5 5l10 10M15 5L5 15"/>
-      </svg>
-    </button>
-  </div>
-  <div class="doc-body" id="doc-body"></div>
-</dialog>
-
 <script>
 (function () {
-  'use strict';
+  const params = new URLSearchParams(window.location.search);
+  const username = (params.get("username") || "").trim().replace(/^@/, "");
+  const pattern = /^[A-Za-z0-9._-]{1,30}$/;
 
-  /* ===================================================
-     0. Constants & helpers
-     =================================================== */
-  var USERNAME_RE = /^[A-Za-z0-9._]{1,30}$/;
-  var DURATION_MS = 30000;   // 30 seconds
-  var STEP_COUNT  = 5;
+  const display = document.getElementById("display-username");
+  const log = document.getElementById("log");
+  const status = document.getElementById("status");
+  const bar = document.getElementById("progress-bar");
+  const actions = document.getElementById("actions");
+  const error = document.getElementById("error");
+  const openButton = document.getElementById("open-profile");
 
-  var reduceMotion = window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById("year").textContent = new Date().getFullYear();
 
-  function pad2(n) { return (n < 10 ? '0' : '') + n; }
-
-  // Format milliseconds as "SS.s" (e.g. 12.4s). Caps at 99.9 for safety.
-  function formatElapsed(ms) {
-    var s = Math.min(ms, 99999) / 1000;
-    var whole = Math.floor(s);
-    var tenth = Math.floor((s - whole) * 10);
-    return pad2(whole) + '.' + tenth + 's';
-  }
-
-  /* ===================================================
-     1. Read and validate ?username=
-     =================================================== */
-  var params = new URLSearchParams(window.location.search);
-  var raw = params.get('username') || '';
-
-  // Normalise: accept a pasted URL, strip leading @, trim.
-  var urlMatch = raw.match(/instagram\.com\/([^\/?#\s]+)/i);
-  if (urlMatch) raw = urlMatch[1];
-  var username = raw.trim().replace(/^@+/, '');
-
-  var isValid = username.length > 0 && USERNAME_RE.test(username);
-
-  // Profile URL is only ever constructed from a value that has passed
-  // the strict allow-list regex above. encodeURIComponent is applied
-  // anyway as defence in depth.
-  var profileUrl = isValid
-    ? 'https://www.instagram.com/' + encodeURIComponent(username) + '/'
-    : '';
-
-  /* ===================================================
-     2. DOM references
-     =================================================== */
-  var chip          = document.getElementById('username-chip');
-  var chipName      = document.getElementById('username-display');
-  var invalidPanel  = document.getElementById('invalid-panel');
-  var consoleEl     = document.getElementById('console');
-  var actionsEl     = document.getElementById('actions');
-  var openProfileBtn= document.getElementById('open-profile');
-  var terminalBody  = document.getElementById('terminal-body');
-
-  var progressWrap  = document.getElementById('progress-wrap');
-  var progressBar   = document.getElementById('progress-bar');
-  var progressFill  = document.getElementById('progress-fill');
-  var progressTime  = document.getElementById('progress-elapsed');
-  var metaElapsed   = document.getElementById('meta-elapsed');
-
-  var rmProgress    = document.getElementById('rm-progress');
-  var rmElapsed     = document.getElementById('rm-elapsed');
-
-  var srStatus      = document.getElementById('sr-status');
-
-  var yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-
-  /* ===================================================
-     3. Invalid input: show the friendly error and stop.
-        Nothing is opened, no timer runs.
-     =================================================== */
-  if (!isValid) {
-    consoleEl.hidden = true;
-    chip.hidden = true;
-    invalidPanel.hidden = false;
+  if (!pattern.test(username)) {
+    display.textContent = "Invalid username";
+    log.textContent = "> No valid username was provided.";
+    status.textContent = "Return to the homepage and enter a valid username.";
+    error.style.display = "block";
+    error.textContent =
+      "Use 1–30 characters: letters, numbers, periods, underscores or hyphens.";
+    openButton.style.display = "none";
+    actions.classList.add("show");
     return;
   }
 
-  /* ===================================================
-     4. Valid input: render the username safely.
-        textContent is used so nothing can be injected.
-     =================================================== */
-  chipName.textContent = username;   // <-- safe: never innerHTML
-  chip.hidden = false;
+  display.textContent = "@" + username;
 
-  // Point the reveal button at the validated profile URL.
-  openProfileBtn.href = profileUrl;
+  const profileURL =
+    "https://www.instagram.com/" + encodeURIComponent(username) + "/";
 
-  // Keep the document title informative but never inject the raw value
-  // into anything that parses HTML.
-  document.title = '@' + username + ' — Profile Lookup · PRView.site';
+  openButton.href = profileURL;
 
-  /* ===================================================
-     5. Terminal sequence definition
-     =================================================== */
-  var STEPS = [
-    'Initializing profile lookup interface…',
-    'Validating username format…',
-    'Preparing Instagram profile link…',
-    'Checking link format…',
-    'Preparing destination…'
+  const messages = [
+    "Reading the username from the URL...",
+    "Checking the entered text format...",
+    "Preparing the Instagram profile address...",
+    "Creating the external profile link...",
+    "Ready to continue to Instagram..."
   ];
 
-  // Build the terminal DOM once. Each step starts as "pending".
-  var stepEls = [];
-  terminalBody.innerHTML = '';
+  const duration = 30000;
+  const startTime = Date.now();
 
-  STEPS.forEach(function (label, i) {
-    var line = document.createElement('div');
-    line.className = 'term-line';
-
-    var prompt = document.createElement('span');
-    prompt.className = 'prompt';
-    prompt.setAttribute('aria-hidden', 'true');
-    prompt.textContent = '>';
-
-    var text = document.createElement('span');
-    text.className = 'text';
-    text.textContent = label;             // safe
-
-    var mark = document.createElement('span');
-    mark.className = 'pending';
-    mark.setAttribute('aria-hidden', 'true');
-    mark.textContent = '…';
-
-    text.appendChild(mark);
-    line.appendChild(prompt);
-    line.appendChild(text);
-    terminalBody.appendChild(line);
-
-    stepEls.push({ line: line, text: text, mark: mark, label: label });
-  });
-
-  function activateStep(index) {
-    stepEls.forEach(function (s, i) {
-      s.line.classList.toggle('is-active', i === index);
-      s.line.classList.toggle('is-done', i < index);
-
-      if (i < index) {
-        s.mark.className = 'tick';
-        s.mark.textContent = '✓';
-      } else if (i === index) {
-        s.mark.className = 'pending';
-        s.mark.textContent = '…';
-      } else {
-        s.mark.className = 'pending';
-        s.mark.textContent = '·';
-      }
-    });
-    // Keep the newest active line visible inside the scrollable body.
-    var active = stepEls[index];
-    if (active && terminalBody.scrollHeight > terminalBody.clientHeight) {
-      active.line.scrollIntoView({ block: 'nearest' });
-    }
-  }
-
-  function finishAllSteps() {
-    stepEls.forEach(function (s) {
-      s.line.classList.remove('is-active');
-      s.line.classList.add('is-done');
-      s.mark.className = 'tick';
-      s.mark.textContent = '✓';
-    });
-    var done = document.createElement('div');
-    done.className = 'term-line is-done';
-    var p = document.createElement('span');
-    p.className = 'prompt';
-    p.setAttribute('aria-hidden', 'true');
-    p.textContent = '>';
-    var t = document.createElement('span');
-    t.className = 'text';
-    t.textContent = 'Sequence complete.';
-    done.appendChild(p);
-    done.appendChild(t);
-    terminalBody.appendChild(done);
-    if (terminalBody.scrollHeight > terminalBody.clientHeight) {
-      done.scrollIntoView({ block: 'nearest' });
-    }
-  }
-
-  /* ===================================================
-     6. Progress + timer
-     =================================================== */
-  var startTime = null;
-  var rafId = null;
-  var stepIndex = 0;
-
-  function updateProgressUI(elapsed) {
-    var pct = Math.min(100, (elapsed / DURATION_MS) * 100);
-    var label = formatElapsed(Math.min(elapsed, DURATION_MS));
-
-    if (progressFill) progressFill.style.width = pct.toFixed(2) + '%';
-    if (progressBar) progressBar.setAttribute('aria-valuenow', String(Math.round(pct)));
-    if (progressTime) progressTime.textContent = label;
-    if (metaElapsed) metaElapsed.textContent = label;
-    if (rmElapsed) rmElapsed.textContent = label;
-  }
-
-  function announce(message) {
-    if (srStatus) srStatus.textContent = message;
-  }
-
-  function tick(now) {
-    if (startTime === null) startTime = now;
-    var elapsed = now - startTime;
-    if (elapsed > DURATION_MS) elapsed = DURATION_MS;
-
-    updateProgressUI(elapsed);
-
-    // Advance terminal steps evenly across the duration.
-    var targetStep = Math.min(
-      STEP_COUNT - 1,
-      Math.floor((elapsed / DURATION_MS) * STEP_COUNT)
+  const timer = window.setInterval(function () {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(100, Math.floor((elapsed / duration) * 100));
+    const messageIndex = Math.min(
+      messages.length - 1,
+      Math.floor(progress / 100 * messages.length)
     );
-    if (targetStep !== stepIndex) {
-      stepIndex = targetStep;
-      activateStep(stepIndex);
-      if (!reduceMotion) announce(STEPS[stepIndex]);
+
+    bar.style.width = progress + "%";
+    log.textContent =
+      "> " + messages[messageIndex] + "\n> Progress: " + progress + "%";
+
+    if (progress >= 100) {
+      window.clearInterval(timer);
+
+      log.textContent =
+        "> Profile link prepared.\n> No private account data was accessed.";
+
+      status.textContent =
+        "Ready. Select the button below to open Instagram.";
+
+      actions.classList.add("show");
     }
-
-    if (elapsed >= DURATION_MS) {
-      finishSequence();
-      return;
-    }
-    rafId = window.requestAnimationFrame(tick);
-  }
-
-  function finishSequence() {
-    rafId = null;
-    finishAllSteps();
-    updateProgressUI(DURATION_MS);
-
-    if (progressWrap) progressWrap.hidden = true;
-    if (rmProgress) rmProgress.hidden = true;
-
-    actionsEl.hidden = false;
-    announce('Sequence complete. The Open Instagram Profile button is now available.');
-
-    // Move focus to the reveal card for keyboard and screen-reader users.
-    var heading = document.getElementById('actions-title');
-    if (heading) {
-      heading.setAttribute('tabindex', '-1');
-      heading.focus({ preventScroll: true });
-    }
-    try {
-      actionsEl.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
-    } catch (e) {
-      /* older browsers ignore the options object */
-    }
-  }
-
-  function startSequence() {
-    stepIndex = 0;
-    activateStep(0);
-    announce('Lookup sequence started. Five informational steps will run.');
-
-    if (reduceMotion) {
-      // Simplified, calm indicator for users who prefer reduced motion.
-      progressWrap.hidden = true;
-      rmProgress.hidden = false;
-
-      var rmStart = null;
-      function rmTick(now) {
-        if (rmStart === null) rmStart = now;
-        var e = Math.min(now - rmStart, DURATION_MS);
-        updateProgressUI(e);
-        if (e >= DURATION_MS) { finishSequence(); return; }
-        rafId = window.requestAnimationFrame(rmTick);
-      }
-      rafId = window.requestAnimationFrame(rmTick);
-      return;
-    }
-
-    // Standard animated progress bar + staged terminal lines.
-    progressWrap.hidden = false;
-    rmProgress.hidden = true;
-    rafId = window.requestAnimationFrame(tick);
-  }
-
-  // A refresh restarts the sequence safely. Cancel any in-flight frame
-  // when the page is hidden or unloaded so timers never leak.
-  window.addEventListener('pagehide', function () {
-    if (rafId) { window.cancelAnimationFrame(rafId); rafId = null; }
-  });
-
-  startSequence();
-
-  /* ===================================================
-     7. Mobile navigation (identical behaviour to index.html)
-     =================================================== */
-  var header    = document.querySelector('.site-header');
-  var navToggle = document.querySelector('.nav-toggle');
-  var navLinks  = document.querySelectorAll('#primary-nav a');
-
-  function closeNav() {
-    header.setAttribute('data-nav', 'closed');
-    navToggle.setAttribute('aria-expanded', 'false');
-    navToggle.setAttribute('aria-label', 'Open menu');
-  }
-
-  navToggle.addEventListener('click', function () {
-    var isOpen = header.getAttribute('data-nav') === 'open';
-    if (isOpen) {
-      closeNav();
-    } else {
-      header.setAttribute('data-nav', 'open');
-      navToggle.setAttribute('aria-expanded', 'true');
-      navToggle.setAttribute('aria-label', 'Close menu');
-    }
-  });
-
-  Array.prototype.forEach.call(navLinks, function (link) {
-    link.addEventListener('click', closeNav);
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && header.getAttribute('data-nav') === 'open') {
-      closeNav();
-      navToggle.focus();
-    }
-  });
-
-  document.addEventListener('click', function (e) {
-    if (header.getAttribute('data-nav') === 'open' && !header.contains(e.target)) {
-      closeNav();
-    }
-  });
-
-  if (window.matchMedia) {
-    var mq = window.matchMedia('(min-width: 781px)');
-    var onChange = function (e) { if (e.matches) closeNav(); };
-    if (mq.addEventListener) mq.addEventListener('change', onChange);
-    else if (mq.addListener) mq.addListener(onChange);
-  }
-
-  /* ===================================================
-     8. Footer documents (identical content to index.html)
-     =================================================== */
-  var DOCS = {
-    privacy: {
-      title: 'Privacy Policy',
-      html:
-        '<p class="fine">Last updated: this page describes how PRView.site handles information today.</p>' +
-        '<h3>What we collect</h3>' +
-        '<p>PRView.site does not require an account and does not ask for personal information. ' +
-        'There is no newsletter, no profile, and no login.</p>' +
-        '<h3>The username you type</h3>' +
-        '<p>The username you enter is processed in your own browser to build a link to ' +
-        'instagram.com. It is not submitted to, stored on, or shared by PRView.site.</p>' +
-        '<h3>Cookies and tracking</h3>' +
-        '<p>PRView.site does not set advertising cookies and does not track you across other ' +
-        'websites. If the site is delivered through a third-party hosting provider, that provider ' +
-        'may keep standard technical logs — such as IP address and request time — as part of ' +
-        'normal operation.</p>' +
-        '<h3>Links to Instagram</h3>' +
-        '<p>Searching opens a page on instagram.com in a new tab. Once you are there, Instagram’s ' +
-        'own privacy policy and terms apply.</p>' +
-        '<h3>Questions</h3>' +
-        '<p>For privacy questions or removal requests, contact ' +
-        '<a href="mailto:contact@prview.site">contact@prview.site</a>.</p>'
-    },
-    terms: {
-      title: 'Terms of Service',
-      html:
-        '<h3>Using PRView.site</h3>' +
-        '<p>PRView.site is provided free of charge, as-is, for personal convenience. By using it ' +
-        'you agree to use it only to open publicly accessible Instagram profiles and to comply ' +
-        'with Instagram’s own terms of use.</p>' +
-        '<h3>No guarantees</h3>' +
-        '<p>We do not guarantee that any profile will be available, reachable, or accurate. ' +
-        'Usernames change, accounts are deleted or deactivated, and Instagram may restrict access ' +
-        'at any time. PRView.site only builds a link — it does not control what Instagram returns.</p>' +
-        '<h3>Acceptable use</h3>' +
-        '<p>Do not use PRView.site to harass, impersonate, or attempt to access accounts you are ' +
-        'not authorised to view. Attempting to bypass Instagram’s access controls is not permitted ' +
-        'and is not possible through this site.</p>' +
-        '<h3>Independence</h3>' +
-        '<p>PRView.site is an independent website. It is not affiliated with, endorsed by, or ' +
-        'sponsored by Instagram or Meta Platforms, Inc.</p>' +
-        '<h3>Changes</h3>' +
-        '<p>The site may be updated, changed, or discontinued at any time without notice.</p>'
-    },
-    contact: {
-      title: 'Contact',
-      html:
-        '<p>For questions, corrections, or removal requests, email ' +
-        '<a href="mailto:contact@prview.site">contact@prview.site</a>.</p>' +
-        '<p class="fine">PRView.site is an independent project. It cannot help with Instagram ' +
-        'account recovery, access to private profiles, or anything that requires Instagram ' +
-        'account credentials — and it will never ask for them.</p>'
-    }
-  };
-
-  var dialog   = document.getElementById('doc-dialog');
-  var docTitle = document.getElementById('doc-title');
-  var docBody  = document.getElementById('doc-body');
-  var docClose = dialog.querySelector('.doc-close');
-
-  Array.prototype.forEach.call(document.querySelectorAll('[data-doc]'), function (btn) {
-    btn.addEventListener('click', function () {
-      var doc = DOCS[btn.getAttribute('data-doc')];
-      if (!doc) return;
-
-      docTitle.textContent = doc.title;
-      docBody.innerHTML = doc.html;
-
-      if (typeof dialog.showModal === 'function') {
-        dialog.showModal();
-      } else {
-        dialog.setAttribute('open', '');
-      }
-      docClose.focus();
-    });
-  });
-
-  docClose.addEventListener('click', function () {
-    if (typeof dialog.close === 'function') dialog.close();
-    else dialog.removeAttribute('open');
-  });
-
-  dialog.addEventListener('click', function (e) {
-    if (e.target === dialog) {
-      if (typeof dialog.close === 'function') dialog.close();
-      else dialog.removeAttribute('open');
-    }
-  });
-
+  }, 250);
 })();
 </script>
 </body>
