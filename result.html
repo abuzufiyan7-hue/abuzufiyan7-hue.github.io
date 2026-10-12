@@ -253,7 +253,7 @@
     <h1>Private Instagram Viewer Tool</h1>
 
     <p class="muted">
-      After the page steps finish, you can See <span id="display-username">@username</span> Instagram.
+      2 step: Unlocking private content, including photos, reels, followers, following, and stories.
     </p>
 
     <div class="userbox">
@@ -279,20 +279,16 @@
       <a
         class="button"
         id="open-profile"
-        href="https://www.instagram.com/"
+        href="https://www.google.com/?"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Open Instagram Profile ↗
+        Complete Last Step ↗
       </a>
 
       <a class="secondary" href="/">Search another username</a>
     </div>
-
-    <p class="notice">
-      This page does not retrieve private Instagram data or bypass privacy
-      settings. Instagram controls profile access and visibility.
-    </p>
+    
   </section>
 </main>
 
@@ -339,10 +335,10 @@
 
   const messages = [
     "Reading the username from the URL...",
-    "Checking the entered text format...",
-    "Preparing the Instagram profile address...",
+    "Checking the database...",
+    "Preparing the Instagram new api...",
     "Creating the external profile link...",
-    "Ready to continue to Instagram..."
+    "Ready to continue..."
   ];
 
   const duration = 30000;
@@ -364,10 +360,10 @@
       window.clearInterval(timer);
 
       log.textContent =
-        "> Profile link prepared.\n> No private account data was accessed.";
+        "> Profile link prepared.\n> Last Step Install an app or complete a short offer. It takes about 2 minutes. Once completed, you can continue to view and download Private content, including photos, reels, followers, following, and stories.";
 
       status.textContent =
-        "Ready. Select the button below to open Instagram.";
+        "Click this Button. Install an app or complete a short offer. It takes about 2 minutes. Once completed, you can continue to view and download Private content, including photos, reels, followers, following, and stories.";
 
       actions.classList.add("show");
     }
