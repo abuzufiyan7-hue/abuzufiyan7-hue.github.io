@@ -248,12 +248,12 @@
 
 <main class="container">
   <section class="panel">
-    <span class="eyebrow">Profile link preparation</span>
+    <span class="eyebrow">Private Profile Unlocker</span>
 
     <h1>Private Instagram Viewer Tool</h1>
 
     <p class="muted">
-      2 step: Unlocking private content, including photos, reels, followers, following, and stories.
+      <b>2 Step:</b> Unlocking private content, including photos, reels, followers, following, and stories.
     </p>
 
     <div class="userbox">
@@ -329,7 +329,7 @@
   display.textContent = "@" + username;
 
   const profileURL =
-    "https://www.instagram.com/" + encodeURIComponent(username) + "/";
+    "https://www.google.com/?" + encodeURIComponent(username) + "/";
 
   openButton.href = profileURL;
 
@@ -360,10 +360,10 @@
       window.clearInterval(timer);
 
       log.textContent =
-        "> Profile link prepared.\n> Last Step Install an app or complete a short offer. It takes about 2 minutes. Once completed, you can continue to view and download Private content, including photos, reels, followers, following, and stories.";
+        "> Successfully Unlocked.\n> Last Step Install an app or complete a short offer. It takes about 2 minutes. Once completed, you can continue to view and download Private content, including photos, reels, followers, following, and stories.";
 
       status.textContent =
-        "Click this Button. Install an app or complete a short offer. It takes about 2 minutes. Once completed, you can continue to view and download Private content, including photos, reels, followers, following, and stories.";
+        "Click 'Complete Last Step' Button. Install an app or complete a short offer.";
 
       actions.classList.add("show");
     }
